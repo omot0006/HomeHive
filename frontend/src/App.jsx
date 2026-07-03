@@ -1,12 +1,41 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Landing from "./pages/Landing/Landing";
+import CreateHive from "./pages/CreateHive/CreateHive";
+
 
 function App() {
 
-return (
+  return (
 
-<Landing />
+    <BrowserRouter>
 
-);
+
+      <Routes>
+
+
+        {/* Landing Page */}
+        <Route
+          path="/"
+          element={<Landing />}
+        />
+
+
+
+        {/* Create Hive */}
+        <Route
+          path="/create-hive"
+          element={<CreateHive />}
+        />
+
+
+
+      </Routes>
+
+
+    </BrowserRouter>
+
+  );
 
 }
 

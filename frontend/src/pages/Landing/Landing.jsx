@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 import {
   CheckCircle,
@@ -123,22 +124,31 @@ function Landing() {
             </div>
 
 
+            <div className="hidden md:flex items-center gap-4">
 
 
+            <button
+                onClick={() => navigate("/login")}
+                className="text-white/80 font-semibold hover:text-white transition"
+            >
 
-
-
-            <button className="hidden md:block bg-[#ff9f1c] px-6 py-3 rounded-xl font-bold">
-
-            Get Started →
+                Login
 
             </button>
 
 
 
+            <button
+                onClick={() => navigate("/create-hive")}
+                className="bg-[#ff9f1c] px-6 py-3 rounded-xl font-bold hover:scale-105 transition"
+            >
+
+                Get Started →
+
+            </button>
 
 
-
+            </div>
 
 
 
@@ -215,10 +225,21 @@ function Landing() {
 
                 </a>
 
+                <button
+                onClick={() => navigate("/login")}
+                className="text-left text-white font-semibold"
+                >
+
+                Login
+
+                </button>
 
 
 
-                <button className="bg-[#ff9f1c] text-black px-6 py-3 rounded-xl font-bold">
+
+                <button 
+                onClick={() => navigate("/create-hive")}
+                className="bg-[#ff9f1c] text-black px-6 py-3 rounded-xl font-bold">
 
                 Get Started →
 
@@ -309,7 +330,9 @@ function Landing() {
           <div className="mt-10 flex flex-col md:flex-row justify-center gap-5">
 
 
-            <button className="bg-[#ff9f1c] text-black px-8 py-4 rounded-2xl font-bold">
+            <button 
+            onClick={() => navigate("/create-hive")}
+            className="bg-[#ff9f1c] text-black px-8 py-4 rounded-2xl font-bold">
 
               Start your household — free
 
@@ -317,12 +340,19 @@ function Landing() {
 
 
 
-            <button className="bg-white/10 border border-white/20 px-8 py-4 rounded-2xl">
+            <button
+            onClick={() =>
+            document
+            .getElementById("features")
+            .scrollIntoView({behavior:"smooth"})
+            }
 
-              Watch demo
+            className="bg-white/10 border border-white/20 px-8 py-4 rounded-2xl"
+            >
+
+            Watch demo
 
             </button>
-
 
 
           </div>
@@ -343,7 +373,7 @@ function Landing() {
 
         transition={{delay:.2}}
 
-        className="mt-20 max-w-4xl mx-auto bg-white/10 border border-white/20 backdrop-blur-xl rounded-[2rem] p-6 shadow-2xl text-left"
+        className="float mt-20 max-w-4xl mx-auto bg-white/10 border border-white/20 backdrop-blur-xl rounded-[2rem] p-6 shadow-2xl text-left"
 
         >
 
@@ -1477,6 +1507,202 @@ function Landing() {
 
         </section>
 
+        {/* ================= PRICING ================= */}
+
+
+        <section className="py-28 px-6 bg-[#fff7ef]">
+
+
+            <div className="max-w-6xl mx-auto text-center">
+
+
+                <p className="text-[#ff9f1c] font-bold">
+                PRICING
+                </p>
+
+
+                <h2 className="text-5xl font-bold mt-5">
+                Start free.
+                <br/>
+                Upgrade as your Hive grows.
+                </h2>
+
+
+                <p className="text-gray-600 mt-6">
+                Simple pricing for roommates, families, and property owners.
+                </p>
+
+
+
+
+
+                <div className="grid md:grid-cols-3 gap-8 mt-20">
+
+
+
+                {[
+
+                    {
+                    name:"Free",
+                    price:"$0",
+                    description:"For roommates getting organized.",
+                    features:[
+                        "Up to 5 members",
+                        "Chores",
+                        "House chat",
+                        "Basic reminders"
+                    ]
+                    },
+
+                    {
+                    name:"Hive Plus",
+                    price:"$4.99",
+                    highlight:true,
+                    description:"For households wanting everything.",
+                    features:[
+                        "Unlimited members",
+                        "AI avatars",
+                        "Advanced analytics",
+                        "Expense tracking"
+                    ]
+                    },
+
+                    {
+                    name:"Landlord",
+                    price:"$14.99",
+                    description:"For managing properties.",
+                    features:[
+                        "Multiple properties",
+                        "Tenant management",
+                        "Requests dashboard",
+                        "Announcements"
+                    ]
+                    }
+
+
+                ].map((plan)=>(
+
+
+
+                    <motion.div
+
+                    key={plan.name}
+
+                    whileHover={{y:-10}}
+
+                    className={`
+                    rounded-[2rem] p-10 text-left shadow-xl
+                    ${
+                    plan.highlight
+                    ? "bg-[#07143d] text-white scale-105"
+                    : "bg-white"
+                    }
+                    `}
+
+                    >
+
+
+
+                    {plan.highlight && (
+
+                        <span className="bg-[#ff9f1c] text-black px-4 py-2 rounded-full text-sm font-bold">
+
+                        MOST POPULAR
+
+                        </span>
+
+                    )}
+
+
+
+
+
+                    <h3 className="text-3xl font-bold mt-8">
+
+                        {plan.name}
+
+                    </h3>
+
+
+
+
+                    <h2 className="text-5xl font-bold mt-5">
+
+                        {plan.price}
+
+                        <span className="text-lg opacity-60">
+
+                        /mo
+
+                        </span>
+
+                    </h2>
+
+
+
+                    <p className="mt-5 opacity-70">
+
+                        {plan.description}
+
+                    </p>
+
+
+
+
+
+                    <ul className="space-y-4 mt-8">
+
+
+                        {plan.features.map((feature)=>(
+
+
+                        <li key={feature}>
+
+                            ✓ {feature}
+
+                        </li>
+
+
+                        ))}
+
+
+                    </ul>
+
+
+
+
+
+                    <button
+                    onClick={() => navigate("/create-hive")}
+
+                    className="mt-10 w-full bg-[#ff9f1c] text-black py-4 rounded-xl font-bold"
+
+                    >
+
+                        Get Started
+
+
+                    </button>
+
+
+
+
+                    </motion.div>
+
+
+
+
+                ))}
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
 
 
 
@@ -1493,7 +1719,9 @@ function Landing() {
         </h2>
 
 
-        <button className="mt-10 bg-[#ff9f1c] px-10 py-5 rounded-2xl font-bold">
+        <button 
+        onClick={() => navigate("/create-hive")}
+        className="mt-10 bg-[#ff9f1c] px-10 py-5 rounded-2xl font-bold">
 
           Create your Hive →
 
