@@ -4,7 +4,6 @@ html {
   scroll-behavior: smooth;
 }
 
-
 body {
   font-family:
     Inter,
@@ -21,7 +20,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-
 /* Better text selection */
 
 ::selection {
@@ -29,60 +27,44 @@ body {
   color: #07143d;
 }
 
-
 /* Premium scrollbar */
 
 ::-webkit-scrollbar {
   width: 10px;
 }
 
-
 ::-webkit-scrollbar-track {
   background: #07143d;
 }
-
 
 ::-webkit-scrollbar-thumb {
   background: #ff9f1c;
   border-radius: 999px;
 }
 
-
-
-
-
 /* reusable glass effect */
 
 .glass {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
-
-
-
-
 
 /* animations */
 
 @keyframes float {
-
   0% {
     transform: translateY(0);
   }
-
 
   50% {
     transform: translateY(-12px);
   }
 
-
   100% {
     transform: translateY(0);
   }
-
 }
-
 
 .float {
   animation: float 5s ease-in-out infinite;
