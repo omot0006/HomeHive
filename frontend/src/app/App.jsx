@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Chores from "./pages/Chores/Chores";
-import Landing from "./pages/Landing/Landing";
-import CreateHive from "./pages/CreateHive/CreateHive";
-import Dashboard from "./pages/Dashboard/Dashboard";
+import Chores from "../features/chores/pages/ChoresPage";
+import Dashboard from "../features/dashboard/pages/DashboardPage";
+import CreateHive from "../features/households/pages/CreateHivePage";
+import Landing from "../features/marketing/pages/LandingPage";
 
 function App() {
   return (

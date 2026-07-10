@@ -1,0 +1,24 @@
+@theme {
+  --color-hive-canvas: #f8f5f0;
+  --color-hive-surface: #fffdfa;
+  --color-hive-ink: #25241f;
+  --color-hive-muted: #746f66;
+  --color-hive-border: #e9e2d8;
+  --color-hive-honey: #f3b340;
+  --color-hive-terracotta: #dd7541;
+  --color-hive-terracotta-strong: #bf5930;
+  --color-hive-sage: #71906d;
+  --color-hive-sage-soft: #e9f1e7;
+  --color-hive-rose-soft: #f7e8e1;
+  --color-hive-ink-soft: #303832;
+  --radius-hive-sm: 0.75rem;
+  --radius-hive-md: 1rem;
+  --radius-hive-lg: 1.5rem;
+  --radius-hive-xl: 2rem;
+  --shadow-hive-card: 0 10px 30px rgb(65 47 31 / 0.08);
+  --shadow-hive-float: 0 20px 50px rgb(65 47 31 / 0.14);
+}
+
+:root {
+  --hh-focus-ring: rgb(221 117 65 / 0.32);
+}

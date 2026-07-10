@@ -1,12 +1,11 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { NavigationItem } from "../../../components/ui";
 
 import {
   Home,
   CheckCircle,
   ShoppingBasket,
   Wallet,
-  MessageCircle,
   Users,
   Settings,
   Search,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 
 function Dashboard() {
-  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [search, setSearch] = useState("");
   const [showChoreModal, setShowChoreModal] = useState(false);
@@ -145,25 +143,10 @@ function Dashboard() {
           {/* MENU */}
 
           <nav className="mt-12 flex flex-col gap-2">
-            {menu.map((item, index) => (
-              <div
-                key={item.name}
-                onClick={() => navigate(item.path)}
-                className={`
-        flex items-center gap-4 rounded-xl px-4 py-3 cursor-pointer transition-all
-
-        ${
-          index === 0
-            ? "bg-[#ff9f1c] text-[#07143d] font-bold shadow-lg"
-            : "text-white/70 hover:bg-white/10 hover:text-white"
-        }
-
-        `}
-              >
-                {item.icon}
-
-                <span>{item.name}</span>
-              </div>
+            {menu.map((item) => (
+              <NavigationItem key={item.name} to={item.path} icon={item.icon}>
+                {item.name}
+              </NavigationItem>
             ))}
           </nav>
         </div>

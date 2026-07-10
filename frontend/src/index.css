@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
 html {
   scroll-behavior: smooth;
@@ -13,7 +14,8 @@ body {
     "Segoe UI",
     sans-serif;
 
-  background: #fff7ef;
+  background: #f8f5f0;
+  color: #25241f;
 
   overflow-x: hidden;
 
@@ -23,8 +25,8 @@ body {
 /* Better text selection */
 
 ::selection {
-  background: #ff9f1c;
-  color: #07143d;
+  background: #f3b340;
+  color: #25241f;
 }
 
 /* Premium scrollbar */
@@ -34,11 +36,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #07143d;
+  background: #303832;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ff9f1c;
+  background: #dd7541;
   border-radius: 999px;
 }
 
