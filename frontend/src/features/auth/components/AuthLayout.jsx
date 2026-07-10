@@ -1,7 +1,7 @@
 import { ArrowLeft, CheckCircle, Home, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "../../../components/ui";
-import logo from "../../../assets/images/brand/homehive-logo.png";
+import Logo from "../../../components/common/Logo";
 
 function AuthLayout({ title, description, children, footer }) {
   return (
@@ -13,9 +13,8 @@ function AuthLayout({ title, description, children, footer }) {
           </Link>
 
           <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
-            <Link to="/" className="mb-10 flex items-center gap-2.5">
-              <img src={logo} alt="" className="h-8 w-8 object-contain" />
-              <span className="text-lg font-bold tracking-tight text-hive-ink">HomeHive</span>
+            <Link to="/" className="mb-10 w-fit">
+              <Logo size="small" textClassName="text-hive-ink" />
             </Link>
             <h1 className="text-3xl font-bold tracking-tight text-hive-ink sm:text-4xl">{title}</h1>
             <p className="mt-3 leading-7 text-hive-muted">{description}</p>

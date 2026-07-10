@@ -1,41 +1,54 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { LoadingState } from "../components/ui";
+import Logo from "../components/common/Logo";
+import NotFoundPage from "./NotFoundPage";
 
-import Chores from "../features/chores/pages/ChoresPage";
-import ForgotPassword from "../features/auth/pages/ForgotPasswordPage";
-import Login from "../features/auth/pages/LoginPage";
-import Register from "../features/auth/pages/RegisterPage";
-import Onboarding from "../features/onboarding/pages/OnboardingPage";
-import Dashboard from "../features/dashboard/pages/DashboardPage";
-import CreateHive from "../features/households/pages/CreateHivePage";
-import Landing from "../features/marketing/pages/LandingPage";
+const Landing = lazy(() => import("../features/marketing/pages/LandingPage"));
+const Login = lazy(() => import("../features/auth/pages/LoginPage"));
+const Register = lazy(() => import("../features/auth/pages/RegisterPage"));
+const ForgotPassword = lazy(() => import("../features/auth/pages/ForgotPasswordPage"));
+const Onboarding = lazy(() => import("../features/onboarding/pages/OnboardingPage"));
+const CreateHive = lazy(() => import("../features/households/pages/CreateHivePage"));
+const Dashboard = lazy(() => import("../features/dashboard/pages/DashboardPage"));
+const Chores = lazy(() => import("../features/chores/pages/ChoresPage"));
+const SharedCalendar = lazy(() => import("../features/calendar/pages/CalendarPage"));
+const Members = lazy(() => import("../features/members/pages/MembersPage"));
+const HouseholdChat = lazy(() => import("../features/chat/pages/ChatPage"));
+const Groceries = lazy(() => import("../features/groceries/pages/GroceriesPage"));
+const Bills = lazy(() => import("../features/bills/pages/BillsPage"));
+const Notifications = lazy(() => import("../features/notifications/pages/NotificationsPage"));
+const Settings = lazy(() => import("../features/settings/pages/SettingsPage"));
+
+function RouteFallback() {
+  return <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-hive-canvas px-5"><Logo size="large" textClassName="text-hive-ink" /><LoadingState label="Opening HomeHive…" /></main>;
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Landing Page */}
-
-        <Route path="/" element={<Landing />} />
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/register" element={<Register />} />
-
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-
-        <Route path="/onboarding" element={<Onboarding />} />
-
-        {/* Create Hive */}
-
-        <Route path="/create-hive" element={<CreateHive />} />
-
-        {/* Dashboard */}
-
-        <Route path="/dashboard" element={<Dashboard />} />
-
-        {/* Chores */}
-        <Route path="/chores" element={<Chores />} />
-      </Routes>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/create-hive" element={<CreateHive />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/chores" element={<Chores />} />
+          <Route path="/calendar" element={<SharedCalendar />} />
+          <Route path="/members" element={<Members />} />
+          <Route path="/chat" element={<HouseholdChat />} />
+          <Route path="/groceries" element={<Groceries />} />
+          <Route path="/expenses" element={<Bills />} />
+          <Route path="/bills" element={<Bills />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Settings />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

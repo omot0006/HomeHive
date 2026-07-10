@@ -2,6 +2,7 @@ import { CheckCircle, ChevronLeft, Copy, Home, Mail, Sparkles, Users } from "luc
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Input } from "../../../components/ui";
+import Logo from "../../../components/common/Logo";
 import OnboardingProgress from "../components/OnboardingProgress";
 
 const householdTypes = ["Apartment", "Family home", "Student house", "Couple", "Other"];
@@ -45,7 +46,7 @@ function OnboardingPage() {
   return (
     <main className="min-h-screen bg-hive-canvas px-4 py-5 sm:px-6 sm:py-8">
       <div className="mx-auto w-full max-w-3xl">
-        <header className="flex items-center justify-between"><button type="button" onClick={() => navigate("/")} className="flex items-center gap-2 text-lg font-bold tracking-tight text-hive-ink"><span className="flex h-8 w-8 items-center justify-center rounded-hive-sm bg-hive-honey text-sm">H</span>HomeHive</button><Badge variant="accent">Setup</Badge></header>
+        <header className="flex items-center justify-between"><button type="button" onClick={() => navigate("/")}><Logo size="small" textClassName="text-hive-ink" /></button><Badge variant="accent">Setup</Badge></header>
         <Card className="mt-6 overflow-hidden p-5 sm:mt-8 sm:p-10">
           <OnboardingProgress currentStep={step} />
           <div className="mt-10">

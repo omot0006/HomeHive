@@ -1,0 +1,64 @@
+import { Bell, Calendar, CheckCircle, ChevronLeft, ChevronRight, Clock, Gift, Plus, Trash2, Users, Wallet } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Button, Card, Input, Modal } from "../../../components/ui";
+
+const members = ["Aisha", "Sarah", "Mike", "Lena"];
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const typeConfig = {
+  Birthday: { icon: Gift, className: "bg-hive-rose-soft text-hive-terracotta" },
+  Cleaning: { icon: CheckCircle, className: "bg-hive-sage-soft text-hive-sage" },
+  Rent: { icon: Wallet, className: "bg-[#fff1cd] text-[#9a6500]" },
+  Garbage: { icon: Trash2, className: "bg-[#e7eef2] text-[#476271]" },
+  Meeting: { icon: Users, className: "bg-[#eee7f5] text-[#735b94]" },
+};
+const initialEvents = [
+  { id: 1, title: "Sarah's birthday dinner", date: "2026-07-18", time: "19:30", type: "Birthday", members: ["Aisha", "Sarah", "Mike", "Lena"], reminder: "1 day before" },
+  { id: 2, title: "Kitchen cleaning day", date: "2026-07-20", time: "10:00", type: "Cleaning", members: ["Aisha", "Mike"], reminder: "2 hours before" },
+  { id: 3, title: "Rent due", date: "2026-07-22", time: "09:00", type: "Rent", members: ["Aisha", "Sarah", "Mike", "Lena"], reminder: "3 days before" },
+  { id: 4, title: "Garbage collection", date: "2026-07-23", time: "07:00", type: "Garbage", members: ["Aisha"], reminder: "1 day before" },
+  { id: 5, title: "Monthly house meeting", date: "2026-07-27", time: "19:00", type: "Meeting", members: ["Aisha", "Sarah", "Mike", "Lena"], reminder: "1 day before" },
+];
+
+const dateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+const parseDate = (date) => new Date(`${date}T12:00:00`);
+const formatTime = (time) => new Date(`2026-01-01T${time}`).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+
+function CalendarPage() {
+  const [view, setView] = useState("month");
+  const [cursor, setCursor] = useState(new Date(2026, 6, 1));
+  const [events, setEvents] = useState(initialEvents);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({ title: "", date: "2026-07-28", time: "18:00", type: "Meeting", members: ["Aisha"], reminder: "1 day before" });
+
+  const monthDays = useMemo(() => {
+    const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+    const count = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+    const days = Array.from({ length: first.getDay() }, () => null);
+    return [...days, ...Array.from({ length: count }, (_, index) => new Date(cursor.getFullYear(), cursor.getMonth(), index + 1))];
+  }, [cursor]);
+  const weekDates = useMemo(() => {
+    const start = new Date(cursor); start.setDate(cursor.getDate() - cursor.getDay());
+    return Array.from({ length: 7 }, (_, index) => { const day = new Date(start); day.setDate(start.getDate() + index); return day; });
+  }, [cursor]);
+  const currentEvents = (date) => events.filter((event) => event.date === dateKey(date)).sort((a, b) => a.time.localeCompare(b.time));
+  const monthLabel = cursor.toLocaleDateString([], { month: "long", year: "numeric" });
+  const move = (amount) => setCursor((current) => view === "month" ? new Date(current.getFullYear(), current.getMonth() + amount, 1) : new Date(current.getFullYear(), current.getMonth(), current.getDate() + amount * 7));
+  const openCreate = () => { setForm({ title: "", date: dateKey(cursor), time: "18:00", type: "Meeting", members: ["Aisha"], reminder: "1 day before" }); setIsModalOpen(true); };
+  const createEvent = () => { if (!form.title.trim()) return; setEvents((current) => [...current, { id: Date.now(), ...form }]); setIsModalOpen(false); };
+  const toggleMember = (member) => setForm((current) => ({ ...current, members: current.members.includes(member) ? current.members.filter((item) => item !== member) : [...current.members, member] }));
+
+  return (
+    <main className="min-h-screen bg-hive-canvas px-4 py-6 sm:px-6 lg:px-10 lg:py-10"><div className="mx-auto max-w-7xl">
+      <header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.16em] text-hive-terracotta"><Calendar size={16} /> Shared planning</p><h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Household calendar</h1><p className="mt-3 text-hive-muted">Plans, reminders, and the important moments your home shares.</p></div><Button size="lg" onClick={openCreate}><Plus size={18} /> Create event</Button></header>
+
+      <section className="mt-7 grid gap-5 xl:grid-cols-[1fr_19rem]"><Card className="overflow-hidden"><div className="flex flex-col justify-between gap-4 border-b border-hive-border p-5 sm:flex-row sm:items-center sm:p-7"><div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => move(-1)} aria-label="Previous period"><ChevronLeft size={17} /></Button><Button variant="outline" size="sm" onClick={() => move(1)} aria-label="Next period"><ChevronRight size={17} /></Button><button type="button" onClick={() => setCursor(new Date(2026, 6, 1))} className="ml-1 text-sm font-bold text-hive-terracotta hover:text-hive-terracotta-strong">Today</button><h2 className="ml-3 text-xl font-bold sm:text-2xl">{monthLabel}</h2></div><div className="flex rounded-hive-md bg-hive-canvas p-1"><button type="button" onClick={() => setView("month")} className={`rounded-hive-sm px-4 py-2 text-sm font-semibold ${view === "month" ? "bg-hive-surface shadow-sm" : "text-hive-muted"}`}>Month</button><button type="button" onClick={() => setView("week")} className={`rounded-hive-sm px-4 py-2 text-sm font-semibold ${view === "week" ? "bg-hive-surface shadow-sm" : "text-hive-muted"}`}>Week</button></div></div>
+        {view === "month" ? <div className="overflow-x-auto"><div className="min-w-[44rem]"><div className="grid grid-cols-7 border-b border-hive-border bg-hive-canvas">{weekDays.map((day) => <p key={day} className="px-3 py-3 text-center text-xs font-bold uppercase tracking-[0.12em] text-hive-muted">{day}</p>)}</div><div className="grid grid-cols-7">{monthDays.map((date, index) => <div key={date ? dateKey(date) : `blank-${index}`} className="min-h-32 border-b border-r border-hive-border/70 p-2.5">{date && <><p className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ${dateKey(date) === "2026-07-10" ? "bg-hive-terracotta text-white" : "text-hive-ink"}`}>{date.getDate()}</p><div className="mt-2 space-y-1">{currentEvents(date).map((event) => <div key={event.id} title={`${event.title} · ${formatTime(event.time)}`} className={`truncate rounded px-2 py-1 text-[11px] font-semibold ${typeConfig[event.type].className}`}>{formatTime(event.time)} {event.title}</div>)}</div></>}</div>)}</div></div></div> : <div className="overflow-x-auto"><div className="min-w-[48rem]"><div className="grid grid-cols-8 border-b border-hive-border bg-hive-canvas"><div className="p-3" />{weekDates.map((date) => <div key={dateKey(date)} className="p-3 text-center"><p className="text-xs font-bold uppercase text-hive-muted">{date.toLocaleDateString([], { weekday: "short" })}</p><p className={`mx-auto mt-1 flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold ${dateKey(date) === "2026-07-10" ? "bg-hive-terracotta text-white" : ""}`}>{date.getDate()}</p></div>)}</div><div className="grid grid-cols-8">{["8 AM", "10 AM", "12 PM", "2 PM", "4 PM", "6 PM", "8 PM"].map((hour) => <><div key={hour} className="border-b border-r border-hive-border p-3 text-xs font-semibold text-hive-muted">{hour}</div>{weekDates.map((date) => <div key={`${hour}-${dateKey(date)}`} className="min-h-16 border-b border-r border-hive-border p-1">{currentEvents(date).filter((event) => event.time.startsWith(hour.startsWith("8") ? "08" : hour.startsWith("10") ? "10" : hour.startsWith("12") ? "12" : hour.startsWith("2") ? "14" : hour.startsWith("4") ? "16" : hour.startsWith("6") ? "18" : "20")).map((event) => <div key={event.id} className={`rounded px-2 py-1 text-[10px] font-bold ${typeConfig[event.type].className}`}>{event.title}</div>)}</div>)}</>)}</div></div></div>}
+      </Card>
+      <aside className="space-y-5"><Card className="p-6"><p className="text-sm font-bold uppercase tracking-[0.16em] text-hive-terracotta">Event types</p><div className="mt-5 space-y-3">{Object.entries(typeConfig).map(([type, config]) => { const Icon = config.icon; return <div key={type} className="flex items-center gap-3"><span className={`flex h-8 w-8 items-center justify-center rounded-hive-sm ${config.className}`}><Icon size={16} /></span><span className="text-sm font-semibold">{type}</span></div>; })}</div></Card><Card className="p-6"><div className="flex items-center justify-between"><div><p className="text-sm font-bold uppercase tracking-[0.16em] text-hive-terracotta">Coming up</p><h2 className="mt-2 text-xl font-bold">Next events</h2></div><Clock size={19} className="text-hive-terracotta" /></div><div className="mt-5 space-y-4">{events.slice().sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)).slice(0, 4).map((event) => <div key={event.id} className="flex gap-3"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-hive-sm ${typeConfig[event.type].className}`}>{(() => { const Icon = typeConfig[event.type].icon; return <Icon size={16} />; })()}</span><div><p className="font-semibold leading-5">{event.title}</p><p className="mt-1 text-sm text-hive-muted">{parseDate(event.date).toLocaleDateString([], { month: "short", day: "numeric" })} · {formatTime(event.time)}</p></div></div>)}</div></Card></aside></section>
+    </div>
+    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create a shared event" description="Keep everyone in the loop with one warm, clear reminder."><div className="space-y-5"><Input label="Event title" placeholder="e.g. Monthly house meeting" value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} /><div className="grid gap-5 sm:grid-cols-2"><Input label="Date" type="date" value={form.date} onChange={(event) => setForm({ ...form, date: event.target.value })} /><Input label="Time" type="time" value={form.time} onChange={(event) => setForm({ ...form, time: event.target.value })} /></div><div className="grid gap-5 sm:grid-cols-2"><label className="block text-sm font-semibold">Event type<select value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value })} className="mt-2 min-h-12 w-full rounded-hive-md border border-hive-border bg-hive-surface px-3 font-normal outline-none focus:border-hive-terracotta focus:ring-4 focus:ring-[var(--hh-focus-ring)]">{Object.keys(typeConfig).map((type) => <option key={type}>{type}</option>)}</select></label><label className="block text-sm font-semibold">Reminder<select value={form.reminder} onChange={(event) => setForm({ ...form, reminder: event.target.value })} className="mt-2 min-h-12 w-full rounded-hive-md border border-hive-border bg-hive-surface px-3 font-normal outline-none focus:border-hive-terracotta focus:ring-4 focus:ring-[var(--hh-focus-ring)]"><option>15 minutes before</option><option>2 hours before</option><option>1 day before</option><option>3 days before</option></select></label></div><div><p className="text-sm font-semibold">Members involved</p><div className="mt-3 flex flex-wrap gap-2">{members.map((member) => <button key={member} type="button" onClick={() => toggleMember(member)} className={`rounded-full px-3 py-2 text-sm font-semibold transition ${form.members.includes(member) ? "bg-hive-terracotta text-white" : "bg-hive-canvas text-hive-muted hover:bg-hive-rose-soft"}`}>{member}</button>)}</div></div><div className="flex gap-3"><Button variant="outline" fullWidth onClick={() => setIsModalOpen(false)}>Cancel</Button><Button fullWidth onClick={createEvent}><Bell size={17} /> Create event</Button></div></div></Modal>
+    </main>
+  );
+}
+
+export default CalendarPage;

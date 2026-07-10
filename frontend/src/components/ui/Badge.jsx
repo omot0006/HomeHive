@@ -3,8 +3,8 @@ import { cn } from "../../utils/cn";
 const variants = {
   neutral: "bg-hive-rose-soft text-hive-ink",
   success: "bg-hive-sage-soft text-hive-sage",
-  warning: "bg-[#fff1cd] text-[#9a6500]",
-  accent: "bg-[#f9e2d5] text-hive-terracotta-strong",
+  warning: "bg-hive-warning-soft text-hive-warning",
+  accent: "bg-hive-rose-soft text-hive-terracotta-strong",
   dark: "bg-hive-ink-soft text-white",
 };
 

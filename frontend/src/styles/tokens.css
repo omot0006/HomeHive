@@ -10,6 +10,12 @@
   --color-hive-sage: #71906d;
   --color-hive-sage-soft: #e9f1e7;
   --color-hive-rose-soft: #f7e8e1;
+  --color-hive-warning: #9a6500;
+  --color-hive-warning-soft: #fff1cd;
+  --color-hive-plum: #735b94;
+  --color-hive-plum-soft: #eee7f5;
+  --color-hive-danger: #b5473d;
+  --color-hive-danger-soft: #f8e9e6;
   --color-hive-ink-soft: #303832;
   --radius-hive-sm: 0.75rem;
   --radius-hive-md: 1rem;
@@ -17,6 +23,7 @@
   --radius-hive-xl: 2rem;
   --shadow-hive-card: 0 10px 30px rgb(65 47 31 / 0.08);
   --shadow-hive-float: 0 20px 50px rgb(65 47 31 / 0.14);
+  --shadow-hive-focus: 0 0 0 4px rgb(221 117 65 / 0.32);
 }
 
 :root {

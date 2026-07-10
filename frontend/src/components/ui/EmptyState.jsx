@@ -9,7 +9,7 @@ function EmptyState({ icon: Icon = Inbox, title, description, actionLabel, onAct
       </div>
       <h3 className="mt-4 text-lg font-bold text-hive-ink">{title}</h3>
       <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-hive-muted">{description}</p>
-      {actionLabel && <Button className="mt-5" size="sm" onClick={onAction}>{actionLabel}</Button>}
+      {actionLabel && onAction && <Button className="mt-5" size="sm" onClick={onAction}>{actionLabel}</Button>}
     </div>
   );
 }

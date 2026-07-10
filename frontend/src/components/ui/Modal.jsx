@@ -1,8 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useId, useRef } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 function Modal({ isOpen, onClose, title, description, children, className }) {
+  const titleId = useId();
+  const descriptionId = useId();
+  const closeButtonRef = useRef(null);
+
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -11,7 +15,14 @@ function Modal({ isOpen, onClose, title, description, children, className }) {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -21,16 +32,17 @@ function Modal({ isOpen, onClose, title, description, children, className }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
-        className={cn("w-full max-w-lg rounded-hive-xl border border-white/60 bg-hive-surface p-6 shadow-hive-float sm:p-8", className)}
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
+        className={cn("max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-hive-xl border border-white/60 bg-hive-surface p-6 shadow-hive-float sm:p-8", className)}
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="modal-title" className="text-2xl font-bold tracking-tight text-hive-ink">{title}</h2>
-            {description && <p className="mt-2 text-hive-muted">{description}</p>}
+            <h2 id={titleId} className="text-2xl font-bold tracking-tight text-hive-ink">{title}</h2>
+            {description && <p id={descriptionId} className="mt-2 text-hive-muted">{description}</p>}
           </div>
-          <button type="button" aria-label="Close dialog" onClick={onClose} className="rounded-hive-sm p-2 text-hive-muted transition hover:bg-hive-rose-soft hover:text-hive-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--hh-focus-ring)]">
+          <button ref={closeButtonRef} type="button" aria-label="Close dialog" onClick={onClose} className="rounded-hive-sm p-2 text-hive-muted transition hover:bg-hive-rose-soft hover:text-hive-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--hh-focus-ring)]">
             <X size={20} />
           </button>
         </div>
