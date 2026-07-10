@@ -1,540 +1,113 @@
-import { useState } from "react";
-import { NavigationItem } from "../../../components/ui";
-
+import { useMemo, useState } from "react";
 import {
-  Home,
-  CheckCircle,
-  ShoppingBasket,
-  Wallet,
-  Users,
-  Settings,
-  Search,
+  Activity,
   Bell,
+  Calendar,
+  CheckCircle,
+  ChevronRight,
+  Home,
+  ListTodo,
+  Plus,
+  Search,
+  Settings,
+  ShoppingBasket,
+  UserPlus,
+  Users,
+  Wallet,
 } from "lucide-react";
+import { Badge, Button, Card, Input, Modal, NavigationItem } from "../../../components/ui";
+
+const members = [
+  { initials: "AM", name: "Aisha Martin", status: "Online", contribution: "92%", color: "bg-hive-terracotta" },
+  { initials: "SM", name: "Sarah Miller", status: "At home", contribution: "88%", color: "bg-hive-honey" },
+  { initials: "MJ", name: "Mike Jordan", status: "Away", contribution: "81%", color: "bg-hive-sage" },
+  { initials: "LO", name: "Lena Ortiz", status: "Online", contribution: "95%", color: "bg-[#c8b8de]" },
+];
+
+const initialTasks = [
+  { id: 1, title: "Kitchen reset", due: "Today · 6:00 PM", complete: false },
+  { id: 2, title: "Put bins out", due: "Tomorrow morning", complete: false },
+  { id: 3, title: "Wipe bathroom mirror", due: "Friday", complete: true },
+];
+
+const initialEvents = [
+  { id: 1, date: "18", month: "JUL", title: "Sarah’s birthday dinner", detail: "Friday · 7:30 PM", tone: "bg-hive-rose-soft text-hive-terracotta" },
+  { id: 2, date: "22", month: "JUL", title: "Rent reminder", detail: "Monday · due in 4 days", tone: "bg-[#fff1cd] text-[#9a6500]" },
+  { id: 3, date: "27", month: "JUL", title: "House movie night", detail: "Saturday · living room", tone: "bg-hive-sage-soft text-hive-sage" },
+];
+
+const activities = [
+  { name: "Sarah", text: "completed the dishes", time: "12 min ago", type: "task" },
+  { name: "Mike", text: "added groceries to the list", time: "38 min ago", type: "groceries" },
+  { name: "Lena", text: "paid her utilities share", time: "2 hr ago", type: "bill" },
+];
 
 function Dashboard() {
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [search, setSearch] = useState("");
-  const [showChoreModal, setShowChoreModal] = useState(false);
+  const [tasks, setTasks] = useState(initialTasks);
+  const [events, setEvents] = useState(initialEvents);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [quickAction, setQuickAction] = useState("");
+  const [entry, setEntry] = useState("");
+  const [notice, setNotice] = useState("");
 
-  const [newChore, setNewChore] = useState({
-    title: "",
-    assigned: "Aisha",
-  });
-  const [chores, setChores] = useState([
-    {
-      title: "Trash removed",
-      assigned: "Marcus",
-      done: true,
-    },
-
-    {
-      title: "Kitchen cleaning",
-      assigned: "Aisha",
-      done: false,
-    },
-
-    {
-      title: "Laundry pending",
-      assigned: "Julian",
-      done: false,
-    },
-  ]);
-  const completedChores = chores.filter((chore) => chore.done).length;
-
-  const hiveScore = Math.round((completedChores / chores.length) * 100);
-  const searchItems = [
-    {
-      icon: "🧹",
-      title: "Kitchen Cleaning",
-      description: "Chore assigned to Aisha",
-    },
-
-    {
-      icon: "🗑️",
-      title: "Take Trash Out",
-      description: "Chore assigned to Marcus",
-    },
-
-    {
-      icon: "💰",
-      title: "Rent Payment",
-      description: "$420 of $600 collected",
-    },
-
-    {
-      icon: "🛒",
-      title: "Groceries",
-      description: "Current total $82",
-    },
-
-    {
-      icon: "👩🏻‍🎨",
-      title: "Aisha",
-      description: "House member",
-    },
-
-    {
-      icon: "👨🏾‍💻",
-      title: "Marcus",
-      description: "House member",
-    },
-  ];
-
-  const results = searchItems.filter((item) =>
-    item.title.toLowerCase().includes(search.toLowerCase()),
-  );
+  const completedTasks = tasks.filter((task) => task.complete).length;
+  const health = useMemo(() => Math.round(72 + (completedTasks / tasks.length) * 24), [completedTasks, tasks.length]);
   const menu = [
-    {
-      icon: <Home />,
-      name: "Dashboard",
-      path: "/dashboard",
-    },
-
-    {
-      icon: <CheckCircle />,
-      name: "Chores",
-      path: "/chores",
-    },
-
-    {
-      icon: <ShoppingBasket />,
-      name: "Groceries",
-      path: "/groceries",
-    },
-
-    {
-      icon: <Wallet />,
-      name: "Expenses",
-      path: "/expenses",
-    },
-
-    {
-      icon: <Users />,
-      name: "Members",
-      path: "/members",
-    },
-
-    {
-      icon: <Settings />,
-      name: "Settings",
-      path: "/settings",
-    },
+    { icon: <Home />, name: "Dashboard", path: "/dashboard" },
+    { icon: <CheckCircle />, name: "Chores", path: "/chores" },
+    { icon: <ShoppingBasket />, name: "Groceries", path: "/groceries" },
+    { icon: <Wallet />, name: "Expenses", path: "/expenses" },
+    { icon: <Users />, name: "Members", path: "/members" },
+    { icon: <Settings />, name: "Settings", path: "/settings" },
   ];
+
+  const toggleTask = (id) => setTasks((current) => current.map((task) => task.id === id ? { ...task, complete: !task.complete } : task));
+  const openQuickAction = (action) => { setEntry(""); setQuickAction(action); };
+  const saveQuickAction = () => {
+    if (!entry.trim()) return;
+    if (quickAction === "Add chore") setTasks((current) => [...current, { id: Date.now(), title: entry, due: "Newly added", complete: false }]);
+    if (quickAction === "Add event") setEvents((current) => [...current, { id: Date.now(), date: "NEW", month: "", title: entry, detail: "Just added", tone: "bg-hive-rose-soft text-hive-terracotta" }]);
+    if (quickAction === "Invite member") setNotice(`Invitation ready for ${entry}.`);
+    setQuickAction("");
+  };
+  const actionCopy = { "Add chore": { label: "Chore name", placeholder: "e.g. Clean the fridge" }, "Add event": { label: "Event name", placeholder: "e.g. Game night" }, "Invite member": { label: "Member email", placeholder: "roommate@example.com" } };
 
   return (
-    <div className="min-h-screen flex bg-[#fff7ef]">
-      {/* SIDEBAR */}
-
-      {/* SIDEBAR */}
-
-      <aside className="hidden md:flex w-72 min-h-screen flex-col justify-between bg-[#07143d] text-white p-6">
+    <div className="min-h-screen bg-hive-canvas text-hive-ink md:flex">
+      <aside className="hidden min-h-screen w-72 flex-col justify-between bg-hive-ink-soft p-6 text-white md:flex">
         <div>
-          {/* LOGO */}
-
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#ff9f1c] text-[#07143d]">
-              🐝
-            </div>
-
-            <h1 className="text-2xl font-bold tracking-tight">HomeHive</h1>
-          </div>
-
-          {/* MENU */}
-
-          <nav className="mt-12 flex flex-col gap-2">
-            {menu.map((item) => (
-              <NavigationItem key={item.name} to={item.path} icon={item.icon}>
-                {item.name}
-              </NavigationItem>
-            ))}
-          </nav>
+          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-hive-md bg-hive-honey font-bold text-hive-ink">H</div><h1 className="text-xl font-bold tracking-tight">HomeHive</h1></div>
+          <p className="mt-10 px-3 text-xs font-bold uppercase tracking-[0.16em] text-white/35">Maple House</p>
+          <nav className="mt-3 flex flex-col gap-1">{menu.map((item) => <NavigationItem key={item.name} to={item.path} icon={item.icon}>{item.name}</NavigationItem>)}</nav>
         </div>
-
-        {/* PROFILE CARD */}
-
-        <div className="rounded-2xl bg-white/10 backdrop-blur p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ff9f1c] text-[#07143d] font-bold">
-              AM
-            </div>
-
-            <div>
-              <p className="font-bold">Aisha M.</p>
-
-              <p className="text-sm text-white/50">Maple House</p>
-            </div>
-
-            <button className="ml-auto text-white/50 hover:text-white">
-              ↗
-            </button>
-          </div>
-        </div>
+        <div className="rounded-hive-lg border border-white/10 bg-white/5 p-4"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-hive-terracotta text-sm font-bold">AM</div><div><p className="font-bold">Aisha Martin</p><p className="text-sm text-white/50">Maple House</p></div></div></div>
       </aside>
 
-      {/* MAIN CONTENT */}
+      <main className="min-w-0 flex-1 px-4 pb-10 pt-4 sm:px-6 lg:px-10 lg:pt-8">
+        <header className="flex items-center justify-between gap-4"><div className="flex items-center gap-3 md:hidden"><div className="flex h-9 w-9 items-center justify-center rounded-hive-sm bg-hive-honey font-bold">H</div><span className="font-bold">HomeHive</span></div><div className="hidden md:block"><p className="text-sm font-bold uppercase tracking-[0.16em] text-hive-terracotta">Maple House</p><h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Good morning, Aisha</h2><p className="mt-2 text-hive-muted">Here&apos;s how your household is feeling today.</p></div><div className="flex items-center gap-2"><button type="button" aria-label="Search HomeHive" onClick={() => setIsSearchOpen((open) => !open)} className="flex h-11 w-11 items-center justify-center rounded-hive-md border border-hive-border bg-hive-surface text-hive-muted transition hover:border-hive-terracotta hover:text-hive-terracotta"><Search size={19} /></button><div className="relative"><button type="button" aria-label="Open notifications" onClick={() => setIsNotificationsOpen((open) => !open)} className="relative flex h-11 w-11 items-center justify-center rounded-hive-md border border-hive-border bg-hive-surface text-hive-muted transition hover:border-hive-terracotta hover:text-hive-terracotta"><Bell size={19} /><span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-hive-terracotta" /></button>{isNotificationsOpen && <Card className="absolute right-0 z-30 mt-3 w-80 p-5"><p className="font-bold">Notifications</p><div className="mt-4 space-y-4 text-sm"><p><strong>Chore reminder:</strong> Kitchen reset is due today.</p><p><strong>Rent reminder:</strong> 4 days remaining.</p><p><strong>Birthday ahead:</strong> Sarah&apos;s dinner is Friday.</p></div></Card>}</div><button type="button" className="flex h-11 items-center gap-2 rounded-hive-md border border-hive-border bg-hive-surface px-2 pr-3 text-sm font-semibold"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-hive-terracotta text-xs text-white">AM</span><span className="hidden sm:inline">Aisha</span></button></div></header>
 
-      <main className="flex-1 p-8">
-        {/* HEADER */}
+        <div className="mt-5 md:hidden"><h2 className="text-2xl font-bold tracking-tight">Good morning, Aisha</h2><p className="mt-1 text-sm text-hive-muted">Your household is in a good rhythm.</p></div>
+        {isSearchOpen && <Card className="mt-5 p-4"><Input autoFocus aria-label="Search HomeHive" placeholder="Search tasks, members, and events…" /><p className="mt-3 text-sm text-hive-muted">Try “rent”, “Sarah”, or “kitchen reset”.</p></Card>}
+        {notice && <div className="mt-5 flex items-center justify-between gap-3 rounded-hive-md bg-hive-sage-soft px-4 py-3 text-sm text-hive-sage"><span>{notice}</span><button type="button" className="font-bold" onClick={() => setNotice("")}>Dismiss</button></div>}
 
-        <div className="flex justify-between items-center gap-8">
-          {/* LEFT SIDE */}
+        <section className="mt-7 grid gap-5 xl:grid-cols-[1.45fr_0.9fr]">
+          <Card className="overflow-hidden bg-hive-ink-soft p-6 text-white sm:p-8"><div className="flex items-start justify-between gap-4"><div><Badge variant="warning">Today&apos;s home status</Badge><h3 className="mt-5 text-3xl font-bold tracking-tight">{health}% in sync</h3><p className="mt-2 max-w-md text-white/65">Everyone knows what&apos;s next. Two small tasks will keep Maple House running smoothly.</p></div><div className="flex h-12 w-12 items-center justify-center rounded-hive-lg bg-hive-honey text-hive-ink"><Activity size={23} /></div></div><div className="mt-8 h-3 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-hive-honey transition-all duration-500" style={{ width: `${health}%` }} /></div><div className="mt-4 flex justify-between text-sm text-white/60"><span>{completedTasks} of {tasks.length} tasks complete</span><span>Healthy rhythm</span></div></Card>
+          <Card className="p-6 sm:p-7"><div className="flex items-center justify-between"><div><p className="text-sm font-bold uppercase tracking-[0.14em] text-hive-terracotta">Quick actions</p><h3 className="mt-2 text-xl font-bold">Keep things moving</h3></div><Plus className="text-hive-terracotta" /></div><div className="mt-5 grid gap-2 sm:grid-cols-3 xl:grid-cols-1">{[["Add chore", ListTodo], ["Add event", Calendar], ["Invite member", UserPlus]].map(([label, Icon]) => <button key={label} type="button" onClick={() => openQuickAction(label)} className="flex items-center justify-between rounded-hive-md bg-hive-rose-soft px-4 py-3 text-left text-sm font-bold transition hover:bg-[#f4d5c5]"><span className="flex items-center gap-2"><Icon size={17} className="text-hive-terracotta" />{label}</span><ChevronRight size={16} /></button>)}</div></Card>
+        </section>
 
-          <div>
-            <p className="text-[#ff9f1c] font-bold">MAPLE HOUSE</p>
+        <section className="mt-5 grid gap-5 xl:grid-cols-[1.25fr_0.9fr_0.9fr]">
+          <Card className="p-6 sm:p-7"><div className="flex items-center justify-between"><div><p className="text-sm font-bold uppercase tracking-[0.14em] text-hive-terracotta">My tasks</p><h3 className="mt-2 text-xl font-bold">Your next few things</h3></div><Badge variant="neutral">{tasks.filter((task) => !task.complete).length} open</Badge></div><div className="mt-6 space-y-3">{tasks.map((task) => <button key={task.id} type="button" onClick={() => toggleTask(task.id)} className="flex w-full items-center gap-3 rounded-hive-md p-2 text-left transition hover:bg-hive-canvas"><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${task.complete ? "border-hive-sage bg-hive-sage text-white" : "border-hive-border bg-hive-surface"}`}>{task.complete && <CheckCircle size={14} />}</span><span className="min-w-0 flex-1"><span className={`block font-semibold ${task.complete ? "text-hive-muted line-through" : "text-hive-ink"}`}>{task.title}</span><span className="mt-0.5 block text-sm text-hive-muted">{task.due}</span></span></button>)}</div><Button variant="ghost" className="mt-4" onClick={() => openQuickAction("Add chore")}>View all chores <ChevronRight size={16} /></Button></Card>
+          <Card className="p-6 sm:p-7"><div className="flex items-center justify-between"><div><p className="text-sm font-bold uppercase tracking-[0.14em] text-hive-terracotta">Hive members</p><h3 className="mt-2 text-xl font-bold">Your people</h3></div><Users size={20} className="text-hive-terracotta" /></div><div className="mt-6 space-y-4">{members.map((member) => <div key={member.name} className="flex items-center gap-3"><div className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white ${member.color}`}>{member.initials}</div><div className="min-w-0 flex-1"><p className="truncate font-semibold">{member.name}</p><p className="text-sm text-hive-muted"><span className={`mr-1 inline-block h-2 w-2 rounded-full ${member.status === "Away" ? "bg-hive-honey" : "bg-hive-sage"}`} />{member.status}</p></div><Badge variant="neutral">{member.contribution}</Badge></div>)}</div></Card>
+          <Card className="p-6 sm:p-7"><div className="flex items-center justify-between"><div><p className="text-sm font-bold uppercase tracking-[0.14em] text-hive-terracotta">Upcoming</p><h3 className="mt-2 text-xl font-bold">On the calendar</h3></div><Calendar size={20} className="text-hive-terracotta" /></div><div className="mt-6 space-y-4">{events.map((event) => <div key={event.id} className="flex gap-3"><div className={`flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-hive-md text-xs font-bold ${event.tone}`}><span>{event.date}</span><span className="text-[9px]">{event.month}</span></div><div><p className="font-semibold">{event.title}</p><p className="mt-0.5 text-sm text-hive-muted">{event.detail}</p></div></div>)}</div></Card>
+        </section>
 
-            <h2 className="text-5xl font-bold mt-2">Welcome back, Aisha 👋</h2>
-
-            <p className="text-gray-500 mt-3">
-              Your Hive is organized and running smoothly today.
-            </p>
-          </div>
-
-          {/* RIGHT ACTIONS */}
-
-          <div className="hidden lg:flex items-center gap-4">
-            {/* SEARCH */}
-
-            <div className="relative">
-              <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3 w-72">
-                <Search size={20} className="text-gray-400" />
-
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search HomeHive..."
-                  className="outline-none bg-transparent flex-1"
-                />
-              </div>
-
-              {/* SEARCH RESULTS */}
-
-              {search && (
-                <div className="absolute top-16 w-80 bg-white rounded-3xl shadow-2xl p-5 z-50">
-                  <p className="font-bold mb-4">Results</p>
-
-                  <div className="space-y-4">
-                    {results.length > 0 ? (
-                      results.map((item) => (
-                        <div
-                          key={item.title}
-                          className="flex gap-4 cursor-pointer hover:bg-gray-50 p-2 rounded-xl"
-                        >
-                          <span className="text-2xl">{item.icon}</span>
-
-                          <div>
-                            <p className="font-bold">{item.title}</p>
-
-                            <p className="text-sm text-gray-500">
-                              {item.description}
-                            </p>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500">No results found</p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* NOTIFICATION */}
-
-            <div className="relative">
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="relative bg-white h-14 w-14 rounded-2xl shadow-lg flex items-center justify-center hover:scale-105 transition"
-              >
-                <Bell />
-
-                <span className="absolute top-3 right-3 h-3 w-3 rounded-full bg-[#ff9f1c]"></span>
-              </button>
-
-              {/* NOTIFICATION DROPDOWN */}
-
-              {showNotifications && (
-                <div className="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-2xl p-6 z-50">
-                  <h3 className="font-bold text-xl">Notifications</h3>
-
-                  <div className="space-y-5 mt-6">
-                    {[
-                      {
-                        icon: "🧹",
-                        title: "New chore assigned",
-                        text: "Kitchen cleaning is due today",
-                      },
-
-                      {
-                        icon: "💰",
-                        title: "Rent reminder",
-                        text: "Rent collection closes in 2 days",
-                      },
-
-                      {
-                        icon: "🎂",
-                        title: "Birthday coming",
-                        text: "Maya's birthday is this week",
-                      },
-                    ].map((note) => (
-                      <div key={note.title} className="flex gap-4">
-                        <div className="text-2xl">{note.icon}</div>
-
-                        <div>
-                          <p className="font-bold">{note.title}</p>
-
-                          <p className="text-sm text-gray-500">{note.text}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* ADD */}
-
-            <button
-              onClick={() => setShowChoreModal(true)}
-              className="bg-[#ff9f1c] px-6 py-4 rounded-2xl font-bold shadow-lg hover:scale-105 transition"
-            >
-              + Add Chore
-            </button>
-          </div>
-        </div>
-
-        {/* HIVE HEALTH */}
-
-        <div className="mt-10 bg-[#07143d] text-white rounded-[2rem] p-8 shadow-xl">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-[#ff9f1c] font-bold">HIVE HEALTH</p>
-
-              <h3 className="text-4xl font-bold mt-3">
-                {hiveScore}% Harmony Score
-              </h3>
-            </div>
-
-            <div className="text-5xl">🐝</div>
-          </div>
-
-          <div className="h-4 bg-white/20 rounded-full mt-8">
-            <div
-              style={{
-                width: `${hiveScore}%`,
-              }}
-              className="h-full bg-[#ff9f1c] rounded-full transition-all duration-500"
-            ></div>
-          </div>
-        </div>
-
-        {/* CONTENT AREA */}
-
-        <div className="grid xl:grid-cols-[1fr_350px] gap-8">
-          {/* DASHBOARD CARDS */}
-
-          <div className="grid md:grid-cols-3 gap-8 mt-10">
-            {[
-              {
-                title: "Today's Chores",
-                icon: "🧹",
-                content: chores.map(
-                  (chore) =>
-                    `${chore.done ? "✅" : "⬜"} ${chore.title} (${chore.assigned})`,
-                ),
-              },
-
-              {
-                title: "Expenses",
-                icon: "💰",
-                content: [
-                  "$420 / $600 collected",
-                  "Next rent: July 30",
-                  "Groceries: $82",
-                ],
-              },
-
-              {
-                title: "House Chat",
-                icon: "💬",
-                content: [
-                  "Aisha: Bought groceries",
-                  "Marcus: Rent sent",
-                  "Maya: Movie night?",
-                ],
-              },
-            ].map((card) => (
-              <div
-                key={card.title}
-                className="bg-white rounded-[2rem] p-8 shadow-lg hover:-translate-y-2 transition"
-              >
-                <div className="flex justify-between">
-                  <h3 className="text-xl font-bold">{card.title}</h3>
-
-                  <span className="text-3xl">{card.icon}</span>
-                </div>
-
-                <div className="space-y-4 mt-8">
-                  {card.title === "Today's Chores"
-                    ? chores.map((chore, index) => (
-                        <p
-                          key={index}
-                          onClick={() => {
-                            const updated = [...chores];
-
-                            updated[index].done = !updated[index].done;
-
-                            setChores(updated);
-                          }}
-                          className="text-gray-600 cursor-pointer hover:text-[#ff9f1c] transition"
-                        >
-                          {chore.done ? "✅" : "⬜"} {chore.title}
-                          <span className="text-gray-400">
-                            {" "}
-                            ({chore.assigned})
-                          </span>
-                        </p>
-                      ))
-                    : card.content.map((text) => (
-                        <p key={text} className="text-gray-600">
-                          {text}
-                        </p>
-                      ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* HOUSE PANEL */}
-
-          <aside className="bg-white rounded-[2rem] p-8 shadow-lg mt-10 xl:mt-0">
-            <h2 className="text-2xl font-bold">🏠 Maple House</h2>
-
-            <p className="text-gray-500 mt-2">3 active members</p>
-
-            {/* MEMBERS */}
-
-            <div className="mt-10">
-              <h3 className="font-bold">Members Online</h3>
-
-              <div className="space-y-5 mt-5">
-                {[
-                  ["🧑🏾‍💻", "Marcus", "Online"],
-
-                  ["👩🏻‍🎨", "Aisha", "Online"],
-
-                  ["👨🏽‍🍳", "Julian", "Away"],
-                ].map((member) => (
-                  <div key={member[1]} className="flex items-center gap-4">
-                    <span className="text-3xl">{member[0]}</span>
-
-                    <div>
-                      <p className="font-bold">{member[1]}</p>
-
-                      <p className="text-sm text-gray-500">{member[2]}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* BIRTHDAY */}
-
-            <div className="mt-10 bg-[#fff7ef] rounded-2xl p-5">
-              <h3 className="font-bold">🎂 Upcoming Birthday</h3>
-
-              <p className="mt-3 text-gray-600">Maya's birthday in 3 days</p>
-            </div>
-
-            {/* ACHIEVEMENT */}
-
-            <div className="mt-5 bg-[#07143d] text-white rounded-2xl p-5">
-              <h3 className="font-bold text-[#ff9f1c]">🏆 Achievement</h3>
-
-              <p className="mt-3">12 day clean streak!</p>
-            </div>
-          </aside>
-        </div>
+        <section className="mt-5"><Card className="p-6 sm:p-7"><div className="flex items-center justify-between"><div><p className="text-sm font-bold uppercase tracking-[0.14em] text-hive-terracotta">Activity feed</p><h3 className="mt-2 text-xl font-bold">Around the Hive</h3></div><Activity size={20} className="text-hive-terracotta" /></div><div className="mt-6 grid gap-4 md:grid-cols-3">{activities.map((activity) => <div key={activity.name} className="rounded-hive-lg bg-hive-canvas p-5"><div className="flex h-9 w-9 items-center justify-center rounded-hive-sm bg-hive-surface text-hive-terracotta">{activity.type === "groceries" ? <ShoppingBasket size={17} /> : activity.type === "bill" ? <Wallet size={17} /> : <CheckCircle size={17} />}</div><p className="mt-4 leading-6"><strong>{activity.name}</strong> {activity.text}.</p><p className="mt-2 text-sm text-hive-muted">{activity.time}</p></div>)}</div></Card></section>
       </main>
-      {/* ADD CHORE MODAL */}
 
-      {showChoreModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-[2rem] p-8 w-[450px] shadow-2xl">
-            <h2 className="text-3xl font-bold">Create Chore 🧹</h2>
+      <nav className="sticky bottom-0 z-20 flex justify-between border-t border-hive-border bg-hive-surface px-2 py-2 md:hidden">{menu.slice(0, 5).map((item) => <a key={item.name} href={item.path} className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-hive-sm py-1.5 text-[10px] font-semibold ${item.name === "Dashboard" ? "text-hive-terracotta" : "text-hive-muted"}`}>{item.icon}<span className="truncate">{item.name}</span></a>)}</nav>
 
-            <p className="text-gray-500 mt-2">Assign a new household task.</p>
-
-            <label className="block mt-8 font-bold">Chore name</label>
-
-            <input
-              value={newChore.title}
-              onChange={(e) =>
-                setNewChore({
-                  ...newChore,
-
-                  title: e.target.value,
-                })
-              }
-              placeholder="Clean kitchen"
-              className="mt-3 w-full border rounded-xl p-4"
-            />
-
-            <label className="block mt-6 font-bold">Assign to</label>
-
-            <select
-              value={newChore.assigned}
-              onChange={(e) =>
-                setNewChore({
-                  ...newChore,
-
-                  assigned: e.target.value,
-                })
-              }
-              className="mt-3 w-full border rounded-xl p-4"
-            >
-              <option>Aisha</option>
-
-              <option>Marcus</option>
-
-              <option>Julian</option>
-            </select>
-
-            <div className="flex gap-4 mt-10">
-              <button
-                onClick={() => setShowChoreModal(false)}
-                className="flex-1 bg-gray-100 py-4 rounded-xl"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={() => {
-                  setChores([
-                    ...chores,
-
-                    {
-                      title: newChore.title,
-                      assigned: newChore.assigned,
-                      done: false,
-                    },
-                  ]);
-
-                  setNewChore({
-                    title: "",
-                    assigned: "Aisha",
-                  });
-
-                  setShowChoreModal(false);
-                }}
-                className="flex-1 bg-[#ff9f1c] py-4 rounded-xl font-bold"
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal isOpen={Boolean(quickAction)} onClose={() => setQuickAction("")} title={quickAction} description={quickAction === "Invite member" ? "Send an invitation to someone you live with." : "Add a shared detail for Maple House."}><div className="space-y-5"><Input label={actionCopy[quickAction]?.label} placeholder={actionCopy[quickAction]?.placeholder} value={entry} onChange={(event) => setEntry(event.target.value)} /><div className="flex gap-3"><Button variant="outline" fullWidth onClick={() => setQuickAction("")}>Cancel</Button><Button fullWidth onClick={saveQuickAction}>Save</Button></div></div></Modal>
     </div>
   );
 }

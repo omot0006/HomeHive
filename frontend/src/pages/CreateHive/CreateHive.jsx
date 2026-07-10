@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Home, Users, Sparkles } from "lucide-react";
+import { Home } from "lucide-react";
 
 function CreateHive() {
   const navigate = useNavigate();
