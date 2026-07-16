@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:5000/api
+@email = phase2.user@example.com
+@password = StrongPass123!
+@token = paste-token-from-register-or-login-here
+
+### Successful registration
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Phase",
+  "lastName": "Two",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Duplicate registration (run after successful registration)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Phase",
+  "lastName": "Duplicate",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Successful login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Incorrect password
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "incorrect-password"
+}
+
+### Authenticated current user
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}

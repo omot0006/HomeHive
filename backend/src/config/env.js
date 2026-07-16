@@ -13,7 +13,7 @@ const parsePort = (value) => {
 };
 
 const splitOrigins = (value) =>
-  (value ?? "http://localhost:5173")
+  (value ?? "http://localhost:5173,http://127.0.0.1:5173")
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -23,11 +23,17 @@ const env = Object.freeze({
   port: parsePort(process.env.PORT),
   mongoUri: process.env.MONGODB_URI,
   corsOrigins: splitOrigins(process.env.CORS_ORIGIN),
+  jwtSecret: process.env.JWT_SECRET,
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "1h",
 });
 
 const validateEnvironment = () => {
   if (!env.mongoUri) {
     throw new Error("MONGODB_URI is required. Copy .env.example to .env and add your MongoDB Atlas connection string.");
+  }
+
+  if (!env.jwtSecret || env.jwtSecret.length < 32) {
+    throw new Error("JWT_SECRET is required and must be at least 32 characters long.");
   }
 };
 

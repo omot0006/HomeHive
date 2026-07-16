@@ -1,59 +1,791 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Bell, Calendar, CheckCircle, ChevronDown, Globe, Heart, Home, Mail, Menu, MessageCircle, ShoppingBasket, Sparkles, Users, Wallet, X } from "lucide-react";
+import {
+  ArrowRight,
+  Bell,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  Globe,
+  Heart,
+  Home,
+  Mail,
+  Menu,
+  MessageCircle,
+  ShoppingBasket,
+  Sparkles,
+  Users,
+  Wallet,
+  X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card } from "../../../components/ui";
 import Logo from "../../../components/common/Logo";
 
-const features = [[CheckCircle, "Fair chore rotation", "Clear owners and fair recurring tasks."], [Calendar, "Shared calendar", "Birthdays, guests, rent days, and plans."], [MessageCircle, "Hive messaging", "A calm, searchable place for updates."], [ShoppingBasket, "Grocery lists", "Add items and see who picked them up."], [Wallet, "Bills and expenses", "Track shared costs without awkward reminders."], [Bell, "Smart reminders", "Friendly nudges at the right moment."], [Users, "Member profiles", "Know who is around and contributing."], [Heart, "Birthday notifications", "Celebrate the people who make up home."]];
-const problems = [["01", "Forgotten chores", "Nobody remembers who last took out the trash."], ["02", "Uneven effort", "Invisible work quietly falls to the same people."], ["03", "Grocery confusion", "Duplicate purchases and scattered shopping notes."], ["04", "Missed bills", "Shared due dates live in someone’s memory."], ["05", "Scattered communication", "Important decisions disappear inside group chats."]];
-const audiences = [[Users, "Roommates", "Keep an apartment running without one person managing it all."], [Home, "Students", "Balance classes, cleaning, groceries, and plans."], [Heart, "Families", "Build good habits and clarity for every generation."], [Sparkles, "Couples", "Share home responsibilities so you can enjoy the rest."], [Globe, "Property owners", "Give tenants a more organized shared experience."]];
-const testimonials = [["NR", "Nadia R.", "Three roommates in Toronto", "We stopped using four chats for groceries and chores. It feels calmer immediately."], ["JW", "Jordan W.", "Family of five", "The chore rotation ended the daily negotiation. Everyone can see their contribution."], ["SP", "Sana P.", "Student house in Waterloo", "Rent reminders are no longer uncomfortable. Everything is clear and transparent."]];
-const faqs = [["Is HomeHive free to start?", "Yes. The Free plan includes core household tools for organizing chores, plans, and communication."], ["Can I join an existing household?", "Yes. Create your account and use a Hive invite or code shared by a household member."], ["Who can see our information?", "Only people invited into your Hive can access its shared household space."], ["Does HomeHive process payments?", "Not yet. HomeHive tracks bills, due dates, and shared amounts without processing payments."], ["Can we use only the features we need?", "Absolutely. Start with your biggest pain point and enable optional tools when useful."]];
-const reveal = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.15 }, transition: { duration: 0.45 } };
+const features = [
+  [
+    CheckCircle,
+    "Fair chore rotation",
+    "Clear owners and fair recurring tasks.",
+  ],
+  [Calendar, "Shared calendar", "Birthdays, guests, rent days, and plans."],
+  [MessageCircle, "Hive messaging", "A calm, searchable place for updates."],
+  [ShoppingBasket, "Grocery lists", "Add items and see who picked them up."],
+  [
+    Wallet,
+    "Bills and expenses",
+    "Track shared costs without awkward reminders.",
+  ],
+  [Bell, "Smart reminders", "Friendly nudges at the right moment."],
+  [Users, "Member profiles", "Know who is around and contributing."],
+  [Heart, "Birthday notifications", "Celebrate the people who make up home."],
+];
+const problems = [
+  ["01", "Forgotten chores", "Nobody remembers who last took out the trash."],
+  ["02", "Uneven effort", "Invisible work quietly falls to the same people."],
+  [
+    "03",
+    "Grocery confusion",
+    "Duplicate purchases and scattered shopping notes.",
+  ],
+  ["04", "Missed bills", "Shared due dates live in someone’s memory."],
+  [
+    "05",
+    "Scattered communication",
+    "Important decisions disappear inside group chats.",
+  ],
+];
+const audiences = [
+  [
+    Users,
+    "Roommates",
+    "Keep an apartment running without one person managing it all.",
+  ],
+  [Home, "Students", "Balance classes, cleaning, groceries, and plans."],
+  [Heart, "Families", "Build good habits and clarity for every generation."],
+  [
+    Sparkles,
+    "Couples",
+    "Share home responsibilities so you can enjoy the rest.",
+  ],
+  [
+    Globe,
+    "Property owners",
+    "Give tenants a more organized shared experience.",
+  ],
+];
+const testimonials = [
+  [
+    "NR",
+    "Nadia R.",
+    "Three roommates in Toronto",
+    "We stopped using four chats for groceries and chores. It feels calmer immediately.",
+  ],
+  [
+    "JW",
+    "Jordan W.",
+    "Family of five",
+    "The chore rotation ended the daily negotiation. Everyone can see their contribution.",
+  ],
+  [
+    "SP",
+    "Sana P.",
+    "Student house in Waterloo",
+    "Rent reminders are no longer uncomfortable. Everything is clear and transparent.",
+  ],
+];
+const faqs = [
+  [
+    "Is HomeHive free to start?",
+    "Yes. The Free plan includes core household tools for organizing chores, plans, and communication.",
+  ],
+  [
+    "Can I join an existing household?",
+    "Yes. Create your account and use a Hive invite or code shared by a household member.",
+  ],
+  [
+    "Who can see our information?",
+    "Only people invited into your Hive can access its shared household space.",
+  ],
+  [
+    "Does HomeHive process payments?",
+    "Not yet. HomeHive tracks bills, due dates, and shared amounts without processing payments.",
+  ],
+  [
+    "Can we use only the features we need?",
+    "Absolutely. Start with your biggest pain point and enable optional tools when useful.",
+  ],
+];
+const reveal = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.15 },
+  transition: { duration: 0.45 },
+};
 
 function SectionTitle({ eyebrow, title, text, centered = false }) {
-  return <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#e87722] sm:text-sm sm:tracking-[0.16em]">{eyebrow}</p><h2 className="mt-4 text-3xl font-bold tracking-tight text-[#07143d] sm:text-5xl">{title}</h2>{text && <p className="mt-4 leading-7 text-[#576078] sm:mt-5 sm:text-lg sm:leading-8">{text}</p>}</div>;
+  return (
+    <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#e87722] sm:text-sm sm:tracking-[0.16em]">
+        {eyebrow}
+      </p>
+      <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#07143d] sm:text-5xl">
+        {title}
+      </h2>
+      {text && (
+        <p className="mt-4 leading-7 text-[#576078] sm:mt-5 sm:text-lg sm:leading-8">
+          {text}
+        </p>
+      )}
+    </div>
+  );
 }
 
 function ProductMockup() {
-  return <div className="rounded-[2rem] border border-[#07143d]/10 bg-white p-3 shadow-[0_24px_70px_rgb(7_20_61_/_0.15)] sm:p-5"><div className="rounded-[1.5rem] bg-[#07143d] p-5 text-white sm:p-6"><div className="flex items-center justify-between border-b border-white/10 pb-5"><div className="flex items-center gap-3"><Logo iconOnly size="default" /><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#ffcf7a]">Maple House</p><p className="mt-1 font-bold">Good morning, Aisha</p></div></div><Badge className="bg-white/10 text-white">92% in sync</Badge></div><div className="mt-5 grid gap-4 sm:grid-cols-3"><div className="rounded-hive-lg bg-white/10 p-4"><CheckCircle className="text-[#ffcf7a]" size={18} /><p className="mt-5 font-bold">3 chores</p><p className="mt-1 text-sm text-white/60">Kitchen reset · recycling · laundry</p></div><div className="rounded-hive-lg bg-white/10 p-4"><Calendar className="text-[#ffcf7a]" size={18} /><p className="mt-5 font-bold">3 shared plans</p><p className="mt-1 text-sm text-white/60">Dinner Friday · rent Monday</p></div><div className="rounded-hive-lg bg-[#ff9f1c] p-4 text-[#07143d]"><MessageCircle size={18} /><p className="mt-5 font-bold">5 updates</p><p className="mt-1 text-sm opacity-70">Groceries, chores, and chat</p></div></div><div className="mt-4 rounded-hive-lg bg-white/10 p-4"><p className="font-semibold">Household activity</p><div className="mt-3 grid gap-2 text-sm text-white/70 sm:grid-cols-3"><p>Sarah completed dishes</p><p>Mike added groceries</p><p>Lena paid utilities</p></div></div></div></div>;
+  return (
+    <div className="rounded-[2rem] border border-[#07143d]/10 bg-white p-3 shadow-[0_24px_70px_rgb(7_20_61_/_0.15)] sm:p-5">
+      <div className="rounded-[1.5rem] bg-[#07143d] p-5 text-white sm:p-6">
+        <div className="flex items-center justify-between border-b border-white/10 pb-5">
+          <div className="flex items-center gap-3">
+            <Logo iconOnly size="default" />
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#ffcf7a]">
+                Maple House
+              </p>
+              <p className="mt-1 font-bold">Good morning, Aisha</p>
+            </div>
+          </div>
+          <Badge className="bg-white/10 text-white">92% in sync</Badge>
+        </div>
+        <div className="mt-5 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-hive-lg bg-white/10 p-4">
+            <CheckCircle className="text-[#ffcf7a]" size={18} />
+            <p className="mt-5 font-bold">3 chores</p>
+            <p className="mt-1 text-sm text-white/60">
+              Kitchen reset · recycling · laundry
+            </p>
+          </div>
+          <div className="rounded-hive-lg bg-white/10 p-4">
+            <Calendar className="text-[#ffcf7a]" size={18} />
+            <p className="mt-5 font-bold">3 shared plans</p>
+            <p className="mt-1 text-sm text-white/60">
+              Dinner Friday · rent Monday
+            </p>
+          </div>
+          <div className="rounded-hive-lg bg-[#ff9f1c] p-4 text-[#07143d]">
+            <MessageCircle size={18} />
+            <p className="mt-5 font-bold">5 updates</p>
+            <p className="mt-1 text-sm opacity-70">
+              Groceries, chores, and chat
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 rounded-hive-lg bg-white/10 p-4">
+          <p className="font-semibold">Household activity</p>
+          <div className="mt-3 grid gap-2 text-sm text-white/70 sm:grid-cols-3">
+            <p>Sarah completed dishes</p>
+            <p>Mike added groceries</p>
+            <p>Lena paid utilities</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function Landing() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
-  const scrollTo = (id) => { document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); setMenuOpen(false); };
-  const startHive = () => navigate("/create-hive");
+  const scrollTo = (id) => {
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMenuOpen(false);
+  };
+  const startHive = () => navigate("/register");
   const brandButton = "bg-[#ff9f1c] text-[#07143d] hover:bg-[#f0a716]";
-  const navItems = [["features", "Features"], ["how-it-works", "How It Works"], ["pricing", "Pricing"], ["about", "About"]];
+  const navItems = [
+    ["features", "Features"],
+    ["how-it-works", "How It Works"],
+    ["pricing", "Pricing"],
+    ["about", "About"],
+  ];
 
-  return <main className="overflow-hidden bg-[#fffaf5] text-[#17213d]">
-    <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#07143d]/10 bg-[#fffaf5]/95 backdrop-blur-xl"><div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-5 sm:px-6"><button type="button" onClick={() => scrollTo("top")} aria-label="HomeHive home"><Logo size="small" iconTone="navy" textClassName="text-[#07143d]" /></button><div className="hidden items-center gap-7 text-sm font-semibold text-[#4f5870] lg:flex">{navItems.map(([id, label]) => <button key={id} type="button" onClick={() => scrollTo(id)} className="hover:text-[#07143d]">{label}</button>)}</div><div className="hidden items-center gap-2 lg:flex"><Button variant="ghost" onClick={() => navigate("/login")}>Log In</Button><Button className={brandButton} onClick={startHive}>Get Started <ArrowRight size={16} /></Button></div><button type="button" className="rounded-hive-sm p-2 text-[#07143d] lg:hidden" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle navigation" aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button></div>{menuOpen && <div className="border-t border-[#07143d]/10 bg-[#fffaf5] px-5 py-4 lg:hidden"><div className="flex flex-col gap-1">{navItems.map(([id, label]) => <button key={id} type="button" onClick={() => scrollTo(id)} className="rounded-hive-sm px-3 py-3 text-left font-semibold text-[#4f5870] hover:bg-[#fff0db]">{label}</button>)}<Button variant="ghost" className="justify-start" onClick={() => navigate("/login")}>Log In</Button><Button className={brandButton} fullWidth onClick={startHive}>Get Started <ArrowRight size={16} /></Button></div></div>}</nav>
+  return (
+    <main className="overflow-hidden bg-[#fffaf5] text-[#17213d]">
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-[#07143d]/10 bg-[#fffaf5]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-5 sm:px-6">
+          <button
+            type="button"
+            onClick={() => scrollTo("top")}
+            aria-label="HomeHive home"
+          >
+            <Logo size="small" iconTone="navy" textClassName="text-[#07143d]" />
+          </button>
+          <div className="hidden items-center gap-7 text-sm font-semibold text-[#4f5870] lg:flex">
+            {navItems.map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => scrollTo(id)}
+                className="hover:text-[#07143d]"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="hidden items-center gap-2 lg:flex">
+            <Button variant="ghost" onClick={() => navigate("/login")}>
+              Log In
+            </Button>
+            <Button className={brandButton} onClick={startHive}>
+              Get Started <ArrowRight size={16} />
+            </Button>
+          </div>
+          <button
+            type="button"
+            className="rounded-hive-sm p-2 text-[#07143d] lg:hidden"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label="Toggle navigation"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
+        {menuOpen && (
+          <div className="border-t border-[#07143d]/10 bg-[#fffaf5] px-5 py-4 lg:hidden">
+            <div className="flex flex-col gap-1">
+              {navItems.map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => scrollTo(id)}
+                  className="rounded-hive-sm px-3 py-3 text-left font-semibold text-[#4f5870] hover:bg-[#fff0db]"
+                >
+                  {label}
+                </button>
+              ))}
+              <Button
+                variant="ghost"
+                className="justify-start"
+                onClick={() => navigate("/login")}
+              >
+                Log In
+              </Button>
+              <Button className={brandButton} fullWidth onClick={startHive}>
+                Get Started <ArrowRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
+      </nav>
 
-    <section id="top" className="relative px-5 pb-20 pt-32 sm:px-6 lg:pb-28 lg:pt-40"><div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_50%_0%,#ffe7c1_0%,transparent_62%)]" /><motion.div {...reveal} className="mx-auto max-w-4xl text-center"><div className="inline-flex items-center gap-2 rounded-full border border-[#07143d]/10 bg-white px-4 py-2 text-sm font-semibold text-[#4f5870] shadow-sm"><Sparkles size={16} className="text-[#ff9f1c]" /> One Home. One Team. Everything in Sync.</div><h1 className="mt-7 text-5xl font-bold tracking-[-0.045em] text-[#07143d] sm:text-6xl lg:text-[4.5rem] lg:leading-[1.05]">The shared space for a home that works <span className="text-[#e87722]">together.</span></h1><p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[#576078] sm:text-xl">HomeHive brings chores, groceries, bills, plans, and household conversation into one welcoming place—so everyone knows what matters next.</p><div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row"><Button size="lg" className={brandButton} onClick={startHive}>Get Started Free <ArrowRight size={18} /></Button><Button size="lg" variant="outline" className="border-[#07143d]/15" onClick={() => scrollTo("product-preview")}>View Demo</Button></div><div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-medium text-[#576078]"><span className="flex items-center gap-1.5"><CheckCircle size={16} className="text-[#4f9a6c]" /> No credit card</span><span className="flex items-center gap-1.5"><CheckCircle size={16} className="text-[#4f9a6c]" /> Set up in minutes</span><span className="flex items-center gap-1.5"><CheckCircle size={16} className="text-[#4f9a6c]" /> Built for real households</span></div></motion.div><motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }} className="mx-auto mt-14 max-w-6xl"><ProductMockup /></motion.div></section>
+      <section
+        id="top"
+        className="relative px-5 pb-20 pt-32 sm:px-6 lg:pb-28 lg:pt-40"
+      >
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_50%_0%,#ffe7c1_0%,transparent_62%)]" />
+        <motion.div {...reveal} className="mx-auto max-w-4xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#07143d]/10 bg-white px-4 py-2 text-sm font-semibold text-[#4f5870] shadow-sm">
+            <Sparkles size={16} className="text-[#ff9f1c]" /> One Home. One
+            Team. Everything in Sync.
+          </div>
+          <h1 className="mt-7 text-5xl font-bold tracking-[-0.045em] text-[#07143d] sm:text-6xl lg:text-[4.5rem] lg:leading-[1.05]">
+            The shared space for a home that works{" "}
+            <span className="text-[#e87722]">together.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[#576078] sm:text-xl">
+            HomeHive brings chores, groceries, bills, plans, and household
+            conversation into one welcoming place—so everyone knows what matters
+            next.
+          </p>
+          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+            <Button size="lg" className={brandButton} onClick={startHive}>
+              Get Started Free <ArrowRight size={18} />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-[#07143d]/15"
+              onClick={() => scrollTo("product-preview")}
+            >
+              View Demo
+            </Button>
+          </div>
+          <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-medium text-[#576078]">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle size={16} className="text-[#4f9a6c]" /> No credit
+              card
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle size={16} className="text-[#4f9a6c]" /> Set up in
+              minutes
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle size={16} className="text-[#4f9a6c]" /> Built for
+              real households
+            </span>
+          </div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.6 }}
+          className="mx-auto mt-14 max-w-6xl"
+        >
+          <ProductMockup />
+        </motion.div>
+      </section>
 
-    <section className="border-y border-[#07143d]/10 bg-white px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-7xl"><SectionTitle eyebrow="The household problem" title="Shared living is wonderful. The admin is not." text="HomeHive replaces the small misunderstandings that drain a home with a simple shared source of truth." /><div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">{problems.map(([number, title, text]) => <Card key={title} interactive className="p-6"><p className="text-sm font-bold text-[#e87722]">{number}</p><h3 className="mt-6 text-xl font-bold text-[#07143d]">{title}</h3><p className="mt-3 text-sm leading-6 text-[#576078]">{text}</p></Card>)}</div></motion.div></section>
+      <section className="border-y border-[#07143d]/10 bg-white px-5 py-20 sm:px-6 lg:py-28">
+        <motion.div {...reveal} className="mx-auto max-w-7xl">
+          <SectionTitle
+            eyebrow="The household problem"
+            title="Shared living is wonderful. The admin is not."
+            text="HomeHive replaces the small misunderstandings that drain a home with a simple shared source of truth."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {problems.map(([number, title, text]) => (
+              <Card key={title} interactive className="p-6">
+                <p className="text-sm font-bold text-[#e87722]">{number}</p>
+                <h3 className="mt-6 text-xl font-bold text-[#07143d]">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-[#576078]">{text}</p>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-    <section id="features" className="px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-7xl"><SectionTitle centered eyebrow="Everything in one Hive" title="The shared details, beautifully organized." text="Built to make daily life lighter—not turn your home into another app to manage." /><div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">{features.map(([Icon, title, text]) => <motion.div key={title} whileHover={{ y: -5 }}><Card interactive className="h-full p-6"><div className="flex h-11 w-11 items-center justify-center rounded-hive-md bg-[#fff0db] text-[#e87722]"><Icon size={21} /></div><h3 className="mt-6 text-lg font-bold text-[#07143d]">{title}</h3><p className="mt-3 text-sm leading-6 text-[#576078]">{text}</p></Card></motion.div>)}</div></motion.div></section>
+      <section id="features" className="px-5 py-20 sm:px-6 lg:py-28">
+        <motion.div {...reveal} className="mx-auto max-w-7xl">
+          <SectionTitle
+            centered
+            eyebrow="Everything in one Hive"
+            title="The shared details, beautifully organized."
+            text="Built to make daily life lighter—not turn your home into another app to manage."
+          />
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {features.map(([Icon, title, text]) => (
+              <motion.div key={title} whileHover={{ y: -5 }}>
+                <Card interactive className="h-full p-6">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-hive-md bg-[#fff0db] text-[#e87722]">
+                    <Icon size={21} />
+                  </div>
+                  <h3 className="mt-6 text-lg font-bold text-[#07143d]">
+                    {title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-[#576078]">
+                    {text}
+                  </p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-    <section id="how-it-works" className="bg-[#07143d] px-5 py-20 text-white sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-7xl"><div className="max-w-2xl"><p className="text-sm font-bold uppercase tracking-[0.16em] text-[#ffcf7a]">How It Works</p><h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">A more peaceful home starts in three steps.</h2></div><div className="mt-12 grid gap-5 md:grid-cols-3">{[["01", "Create or join a Hive", "Start a new household space or use an invite code from the people you live with."], ["02", "Invite household members", "Bring everyone together with a simple invite—roommates, family, partners, or tenants."], ["03", "Manage everything together", "Share chores, plans, groceries, bills, updates, and the everyday moments that matter."]].map(([number, title, text]) => <div key={number} className="rounded-hive-xl border border-white/10 bg-white/5 p-7"><p className="text-4xl font-bold text-[#ff9f1c]">{number}</p><h3 className="mt-10 text-2xl font-bold">{title}</h3><p className="mt-4 leading-7 text-white/65">{text}</p></div>)}</div></motion.div></section>
+      <section
+        id="how-it-works"
+        className="bg-[#07143d] px-5 py-20 text-white sm:px-6 lg:py-28"
+      >
+        <motion.div {...reveal} className="mx-auto max-w-7xl">
+          <div className="max-w-2xl">
+            <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#ffcf7a]">
+              How It Works
+            </p>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
+              A more peaceful home starts in three steps.
+            </h2>
+          </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {[
+              [
+                "01",
+                "Create or join a Hive",
+                "Start a new household space or use an invite code from the people you live with.",
+              ],
+              [
+                "02",
+                "Invite household members",
+                "Bring everyone together with a simple invite—roommates, family, partners, or tenants.",
+              ],
+              [
+                "03",
+                "Manage everything together",
+                "Share chores, plans, groceries, bills, updates, and the everyday moments that matter.",
+              ],
+            ].map(([number, title, text]) => (
+              <div
+                key={number}
+                className="rounded-hive-xl border border-white/10 bg-white/5 p-7"
+              >
+                <p className="text-4xl font-bold text-[#ff9f1c]">{number}</p>
+                <h3 className="mt-10 text-2xl font-bold">{title}</h3>
+                <p className="mt-4 leading-7 text-white/65">{text}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-    <section id="product-preview" className="bg-white px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.85fr_1.15fr]"><div><SectionTitle eyebrow="Product preview" title="See the whole home at a glance." text="Your dashboard turns a busy household into a clear, friendly picture: what needs doing, who is around, and what’s coming up." /><div className="mt-8 space-y-4">{[[CheckCircle, "See chores with owners, due dates, and a fair rotation."], [Users, "Know who is online and how the household is contributing."], [Bell, "Stay ahead of birthdays, rent days, and small reminders."]].map(([Icon, text]) => <div key={text} className="flex gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff0db] text-[#e87722]"><Icon size={15} /></span><p className="leading-7 text-[#576078]">{text}</p></div>)}</div><Button className="mt-9 bg-[#07143d] hover:bg-[#142556]" size="lg" onClick={startHive}>Start Your Household <ArrowRight size={18} /></Button></div><ProductMockup /></motion.div></section>
+      <section
+        id="product-preview"
+        className="bg-white px-5 py-20 sm:px-6 lg:py-28"
+      >
+        <motion.div
+          {...reveal}
+          className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.85fr_1.15fr]"
+        >
+          <div>
+            <SectionTitle
+              eyebrow="Product preview"
+              title="See the whole home at a glance."
+              text="Your dashboard turns a busy household into a clear, friendly picture: what needs doing, who is around, and what’s coming up."
+            />
+            <div className="mt-8 space-y-4">
+              {[
+                [
+                  CheckCircle,
+                  "See chores with owners, due dates, and a fair rotation.",
+                ],
+                [
+                  Users,
+                  "Know who is online and how the household is contributing.",
+                ],
+                [
+                  Bell,
+                  "Stay ahead of birthdays, rent days, and small reminders.",
+                ],
+              ].map(([Icon, text]) => (
+                <div key={text} className="flex gap-3">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff0db] text-[#e87722]">
+                    <Icon size={15} />
+                  </span>
+                  <p className="leading-7 text-[#576078]">{text}</p>
+                </div>
+              ))}
+            </div>
+            <Button
+              className="mt-9 bg-[#07143d] hover:bg-[#142556]"
+              size="lg"
+              onClick={startHive}
+            >
+              Start Your Household <ArrowRight size={18} />
+            </Button>
+          </div>
+          <ProductMockup />
+        </motion.div>
+      </section>
 
-    <section id="about" className="px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-7xl"><SectionTitle eyebrow="Built for every kind of home" title="One platform. Different ways to live." text="HomeHive adapts to the people, routines, and responsibilities that make your home unique." /><div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">{audiences.map(([Icon, title, text]) => <Card key={title} interactive className="p-6"><Icon className="text-[#e87722]" size={22} /><h3 className="mt-6 text-lg font-bold text-[#07143d]">{title}</h3><p className="mt-3 text-sm leading-6 text-[#576078]">{text}</p></Card>)}</div></motion.div></section>
+      <section id="about" className="px-5 py-20 sm:px-6 lg:py-28">
+        <motion.div {...reveal} className="mx-auto max-w-7xl">
+          <SectionTitle
+            eyebrow="Built for every kind of home"
+            title="One platform. Different ways to live."
+            text="HomeHive adapts to the people, routines, and responsibilities that make your home unique."
+          />
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {audiences.map(([Icon, title, text]) => (
+              <Card key={title} interactive className="p-6">
+                <Icon className="text-[#e87722]" size={22} />
+                <h3 className="mt-6 text-lg font-bold text-[#07143d]">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-[#576078]">{text}</p>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-    <section className="bg-[#fff0db] px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-7xl"><SectionTitle centered eyebrow="Households like yours" title="Less friction. More home." /><div className="mt-12 grid gap-5 md:grid-cols-3">{testimonials.map(([initials, name, household, quote], index) => <Card key={name} className="p-7"><p className="text-lg leading-8 text-[#37415d]">“{quote}”</p><div className="mt-7 flex items-center gap-3"><div className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white ${["bg-[#e3a06d]", "bg-[#7f9f7a]", "bg-[#8671a1]"][index]}`}>{initials}</div><div><p className="font-bold text-[#07143d]">{name}</p><p className="text-sm text-[#576078]">{household}</p></div></div></Card>)}</div></motion.div></section>
+      <section className="bg-[#fff0db] px-5 py-20 sm:px-6 lg:py-28">
+        <motion.div {...reveal} className="mx-auto max-w-7xl">
+          <SectionTitle
+            centered
+            eyebrow="Households like yours"
+            title="Less friction. More home."
+          />
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {testimonials.map(([initials, name, household, quote], index) => (
+              <Card key={name} className="p-7">
+                <p className="text-lg leading-8 text-[#37415d]">“{quote}”</p>
+                <div className="mt-7 flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white ${["bg-[#e3a06d]", "bg-[#7f9f7a]", "bg-[#8671a1]"][index]}`}
+                  >
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#07143d]">{name}</p>
+                    <p className="text-sm text-[#576078]">{household}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-    <section id="pricing" className="bg-white px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-4xl"><SectionTitle centered eyebrow="Simple pricing" title="Start free. Grow together." text="No payment setup is needed to explore the household essentials." /><div className="mt-12 grid gap-5 md:grid-cols-2"><Card className="p-7"><p className="text-sm font-bold uppercase tracking-[0.16em] text-[#e87722]">Free</p><p className="mt-5 text-5xl font-bold text-[#07143d]">$0<span className="text-base font-medium text-[#576078]"> / month</span></p><p className="mt-4 leading-7 text-[#576078]">For households ready to bring the basics into one place.</p><ul className="mt-7 space-y-3 text-sm text-[#37415d]">{["Up to 5 household members", "Chores and fair rotation", "Shared calendar", "Hive chat and reminders"].map((item) => <li key={item} className="flex gap-2"><CheckCircle size={17} className="shrink-0 text-[#4f9a6c]" />{item}</li>)}</ul><Button variant="outline" className="mt-8 w-full" onClick={startHive}>Get Started Free</Button></Card><Card className="border-[#07143d] bg-[#07143d] p-7 text-white shadow-[0_20px_50px_rgb(7_20_61_/_0.22)]"><div className="flex items-center justify-between"><p className="text-sm font-bold uppercase tracking-[0.16em] text-[#ffcf7a]">HomeHive Plus</p><Badge className="bg-[#ff9f1c] text-[#07143d]">Coming soon</Badge></div><p className="mt-5 text-5xl font-bold">$4.99<span className="text-base font-medium text-white/60"> / month</span></p><p className="mt-4 leading-7 text-white/70">For households that want deeper insights and expanded planning tools.</p><ul className="mt-7 space-y-3 text-sm text-white/80">{["Everything in Free", "Unlimited household members", "Contribution insights", "Expanded bill and activity history"].map((item) => <li key={item} className="flex gap-2"><CheckCircle size={17} className="shrink-0 text-[#ffcf7a]" />{item}</li>)}</ul><Button className={`mt-8 w-full ${brandButton}`} onClick={startHive}>Join the Early List</Button></Card></div></motion.div></section>
+      <section id="pricing" className="bg-white px-5 py-20 sm:px-6 lg:py-28">
+        <motion.div {...reveal} className="mx-auto max-w-4xl">
+          <SectionTitle
+            centered
+            eyebrow="Simple pricing"
+            title="Start free. Grow together."
+            text="No payment setup is needed to explore the household essentials."
+          />
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            <Card className="p-7">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#e87722]">
+                Free
+              </p>
+              <p className="mt-5 text-5xl font-bold text-[#07143d]">
+                $0
+                <span className="text-base font-medium text-[#576078]">
+                  {" "}
+                  / month
+                </span>
+              </p>
+              <p className="mt-4 leading-7 text-[#576078]">
+                For households ready to bring the basics into one place.
+              </p>
+              <ul className="mt-7 space-y-3 text-sm text-[#37415d]">
+                {[
+                  "Up to 5 household members",
+                  "Chores and fair rotation",
+                  "Shared calendar",
+                  "Hive chat and reminders",
+                ].map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <CheckCircle
+                      size={17}
+                      className="shrink-0 text-[#4f9a6c]"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                variant="outline"
+                className="mt-8 w-full"
+                onClick={startHive}
+              >
+                Get Started Free
+              </Button>
+            </Card>
+            <Card className="border-[#07143d] bg-[#07143d] p-7 text-white shadow-[0_20px_50px_rgb(7_20_61_/_0.22)]">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#ffcf7a]">
+                  HomeHive Plus
+                </p>
+                <Badge className="bg-[#ff9f1c] text-[#07143d]">
+                  Coming soon
+                </Badge>
+              </div>
+              <p className="mt-5 text-5xl font-bold">
+                $4.99
+                <span className="text-base font-medium text-white/60">
+                  {" "}
+                  / month
+                </span>
+              </p>
+              <p className="mt-4 leading-7 text-white/70">
+                For households that want deeper insights and expanded planning
+                tools.
+              </p>
+              <ul className="mt-7 space-y-3 text-sm text-white/80">
+                {[
+                  "Everything in Free",
+                  "Unlimited household members",
+                  "Contribution insights",
+                  "Expanded bill and activity history",
+                ].map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <CheckCircle
+                      size={17}
+                      className="shrink-0 text-[#ffcf7a]"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className={`mt-8 w-full ${brandButton}`}
+                onClick={startHive}
+              >
+                Join the Early List
+              </Button>
+            </Card>
+          </div>
+        </motion.div>
+      </section>
 
-    <section id="faq" className="px-5 py-20 sm:px-6 lg:py-28"><motion.div {...reveal} className="mx-auto max-w-3xl"><SectionTitle centered eyebrow="FAQ" title="A few good questions." /><div className="mt-12 divide-y divide-[#07143d]/10 rounded-hive-xl border border-[#07143d]/10 bg-white px-5 sm:px-6">{faqs.map(([question, answer], index) => <div key={question}><button type="button" onClick={() => setOpenFaq((current) => current === index ? -1 : index)} className="flex w-full items-center justify-between gap-6 py-5 text-left font-bold text-[#07143d] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#ff9f1c]/30" aria-expanded={openFaq === index} aria-controls={`faq-answer-${index}`}><span>{question}</span><ChevronDown size={20} className={`shrink-0 text-[#e87722] transition ${openFaq === index ? "rotate-180" : ""}`} /></button>{openFaq === index && <p id={`faq-answer-${index}`} className="max-w-2xl pb-5 leading-7 text-[#576078]">{answer}</p>}</div>)}</div></motion.div></section>
+      <section id="faq" className="px-5 py-20 sm:px-6 lg:py-28">
+        <motion.div {...reveal} className="mx-auto max-w-3xl">
+          <SectionTitle centered eyebrow="FAQ" title="A few good questions." />
+          <div className="mt-12 divide-y divide-[#07143d]/10 rounded-hive-xl border border-[#07143d]/10 bg-white px-5 sm:px-6">
+            {faqs.map(([question, answer], index) => (
+              <div key={question}>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenFaq((current) => (current === index ? -1 : index))
+                  }
+                  className="flex w-full items-center justify-between gap-6 py-5 text-left font-bold text-[#07143d] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#ff9f1c]/30"
+                  aria-expanded={openFaq === index}
+                  aria-controls={`faq-answer-${index}`}
+                >
+                  <span>{question}</span>
+                  <ChevronDown
+                    size={20}
+                    className={`shrink-0 text-[#e87722] transition ${openFaq === index ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {openFaq === index && (
+                  <p
+                    id={`faq-answer-${index}`}
+                    className="max-w-2xl pb-5 leading-7 text-[#576078]"
+                  >
+                    {answer}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-    <section className="px-5 pb-20 sm:px-6 lg:pb-28"><motion.div {...reveal} className="mx-auto max-w-6xl rounded-[2rem] bg-[#07143d] px-6 py-14 text-center text-white sm:px-12 sm:py-16"><Users className="mx-auto text-[#ffcf7a]" size={32} /><h2 className="mx-auto mt-5 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">Make home feel like a team again.</h2><p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-white/70">Bring the people and responsibilities you share into one welcoming place.</p><Button className={`mt-8 ${brandButton}`} size="lg" onClick={startHive}>Get Started Free <ArrowRight size={18} /></Button></motion.div></section>
+      <section className="px-5 pb-20 sm:px-6 lg:pb-28">
+        <motion.div
+          {...reveal}
+          className="mx-auto max-w-6xl rounded-[2rem] bg-[#07143d] px-6 py-14 text-center text-white sm:px-12 sm:py-16"
+        >
+          <Users className="mx-auto text-[#ffcf7a]" size={32} />
+          <h2 className="mx-auto mt-5 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
+            Make home feel like a team again.
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-white/70">
+            Bring the people and responsibilities you share into one welcoming
+            place.
+          </p>
+          <Button
+            className={`mt-8 ${brandButton}`}
+            size="lg"
+            onClick={startHive}
+          >
+            Get Started Free <ArrowRight size={18} />
+          </Button>
+        </motion.div>
+      </section>
 
-    <footer className="border-t border-[#07143d]/10 bg-white px-5 py-12 sm:px-6"><div className="mx-auto max-w-7xl"><div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]"><div><Logo size="small" iconTone="navy" textClassName="text-[#07143d]" /><p className="mt-4 max-w-sm leading-7 text-[#576078]">One Home. One Team. Everything in Sync.</p><div className="mt-5 flex gap-2"><a href="#top" aria-label="HomeHive website" className="rounded-full bg-[#fff0db] p-2 text-[#e87722]"><Globe size={17} /></a><a href="mailto:hello@homehive.app" aria-label="Email HomeHive" className="rounded-full bg-[#fff0db] p-2 text-[#e87722]"><Mail size={17} /></a><a href="#features" aria-label="HomeHive community" className="rounded-full bg-[#fff0db] p-2 text-[#e87722]"><MessageCircle size={17} /></a></div></div><div><h3 className="font-bold text-[#07143d]">Product</h3><div className="mt-4 space-y-3 text-sm text-[#576078]"><button type="button" onClick={() => scrollTo("features")} className="block hover:text-[#07143d]">Features</button><button type="button" onClick={() => scrollTo("pricing")} className="block hover:text-[#07143d]">Pricing</button><a href="/dashboard" className="block hover:text-[#07143d]">Dashboard</a></div></div><div><h3 className="font-bold text-[#07143d]">Company</h3><div className="mt-4 space-y-3 text-sm text-[#576078]"><button type="button" onClick={() => scrollTo("about")} className="block hover:text-[#07143d]">About</button><a href="/login" className="block hover:text-[#07143d]">Log In</a><a href="/create-hive" className="block hover:text-[#07143d]">Create a Hive</a></div></div><div><h3 className="font-bold text-[#07143d]">Support</h3><div className="mt-4 space-y-3 text-sm text-[#576078]"><a href="mailto:support@homehive.app" className="block hover:text-[#07143d]">Help Center</a><a href="#faq" className="block hover:text-[#07143d]">FAQ</a><a href="#privacy" className="block hover:text-[#07143d]">Privacy</a><a href="#terms" className="block hover:text-[#07143d]">Terms</a></div></div></div><div className="mt-12 flex flex-col gap-3 border-t border-[#07143d]/10 pt-6 text-sm text-[#576078] sm:flex-row sm:items-center sm:justify-between"><p>© 2026 HomeHive. All rights reserved.</p><p>Made for households that live better together.</p></div></div></footer>
-  </main>;
+      <footer className="border-t border-[#07143d]/10 bg-white px-5 py-12 sm:px-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+            <div>
+              <Logo
+                size="small"
+                iconTone="navy"
+                textClassName="text-[#07143d]"
+              />
+              <p className="mt-4 max-w-sm leading-7 text-[#576078]">
+                One Home. One Team. Everything in Sync.
+              </p>
+              <div className="mt-5 flex gap-2">
+                <a
+                  href="#top"
+                  aria-label="HomeHive website"
+                  className="rounded-full bg-[#fff0db] p-2 text-[#e87722]"
+                >
+                  <Globe size={17} />
+                </a>
+                <a
+                  href="mailto:hello@homehive.app"
+                  aria-label="Email HomeHive"
+                  className="rounded-full bg-[#fff0db] p-2 text-[#e87722]"
+                >
+                  <Mail size={17} />
+                </a>
+                <a
+                  href="#features"
+                  aria-label="HomeHive community"
+                  className="rounded-full bg-[#fff0db] p-2 text-[#e87722]"
+                >
+                  <MessageCircle size={17} />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-[#07143d]">Product</h3>
+              <div className="mt-4 space-y-3 text-sm text-[#576078]">
+                <button
+                  type="button"
+                  onClick={() => scrollTo("features")}
+                  className="block hover:text-[#07143d]"
+                >
+                  Features
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollTo("pricing")}
+                  className="block hover:text-[#07143d]"
+                >
+                  Pricing
+                </button>
+                <a href="/dashboard" className="block hover:text-[#07143d]">
+                  Dashboard
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-[#07143d]">Company</h3>
+              <div className="mt-4 space-y-3 text-sm text-[#576078]">
+                <button
+                  type="button"
+                  onClick={() => scrollTo("about")}
+                  className="block hover:text-[#07143d]"
+                >
+                  About
+                </button>
+                <a href="/login" className="block hover:text-[#07143d]">
+                  Log In
+                </a>
+                <a href="/register" className="block hover:text-[#07143d]">
+                  Create a Hive
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-[#07143d]">Support</h3>
+              <div className="mt-4 space-y-3 text-sm text-[#576078]">
+                <a
+                  href="mailto:support@homehive.app"
+                  className="block hover:text-[#07143d]"
+                >
+                  Help Center
+                </a>
+                <a href="#faq" className="block hover:text-[#07143d]">
+                  FAQ
+                </a>
+                <a href="#privacy" className="block hover:text-[#07143d]">
+                  Privacy
+                </a>
+                <a href="#terms" className="block hover:text-[#07143d]">
+                  Terms
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="mt-12 flex flex-col gap-3 border-t border-[#07143d]/10 pt-6 text-sm text-[#576078] sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2026 HomeHive. All rights reserved.</p>
+            <p>Made for households that live better together.</p>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
 }
 
 export default Landing;

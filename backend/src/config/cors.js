@@ -1,4 +1,5 @@
 const { env } = require("./env");
+const AppError = require("../utils/AppError");
 
 const corsOptions = {
   credentials: true,
@@ -10,9 +11,8 @@ const corsOptions = {
       return;
     }
 
-    callback(new Error(`Origin ${origin} is not allowed by CORS.`));
+    callback(new AppError(`Origin ${origin} is not allowed by CORS.`, 403));
   },
 };
 
 module.exports = corsOptions;
-

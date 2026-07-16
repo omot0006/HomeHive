@@ -1,6 +1,6 @@
 import { CheckCircle, ChevronLeft, Copy, Home, Mail, Sparkles, Users } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Input } from "../../../components/ui";
 import Logo from "../../../components/common/Logo";
 import OnboardingProgress from "../components/OnboardingProgress";
@@ -10,8 +10,10 @@ const avatars = ["AM", "JM", "SK", "RL", "HS"];
 
 function OnboardingPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const [path, setPath] = useState("create");
+  const location = useLocation();
+  const startsInJoinMode = location.pathname === "/join-hive";
+  const [step, setStep] = useState(startsInJoinMode ? 2 : 1);
+  const [path, setPath] = useState(startsInJoinMode ? "join" : "create");
   const [hive, setHive] = useState({ name: "", type: "Apartment", joinCode: "" });
   const [inviteEmail, setInviteEmail] = useState("");
   const [invites, setInvites] = useState([]);
