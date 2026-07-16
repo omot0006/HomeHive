@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { LoadingState } from "../components/ui";
 import Logo from "../components/common/Logo";
 import NotFoundPage from "./NotFoundPage";
+import AppShell from "../components/layout/AppShell";
 
 const Landing = lazy(() => import("../features/marketing/pages/LandingPage"));
 const Login = lazy(() => import("../features/auth/pages/LoginPage"));
@@ -35,17 +36,19 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/create-hive" element={<CreateHive />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chores" element={<Chores />} />
-          <Route path="/calendar" element={<SharedCalendar />} />
-          <Route path="/members" element={<Members />} />
-          <Route path="/chat" element={<HouseholdChat />} />
-          <Route path="/groceries" element={<Groceries />} />
-          <Route path="/expenses" element={<Bills />} />
-          <Route path="/bills" element={<Bills />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/profile" element={<Settings />} />
+          <Route element={<AppShell />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/chores" element={<Chores />} />
+            <Route path="/calendar" element={<SharedCalendar />} />
+            <Route path="/members" element={<Members />} />
+            <Route path="/chat" element={<HouseholdChat />} />
+            <Route path="/groceries" element={<Groceries />} />
+            <Route path="/expenses" element={<Bills />} />
+            <Route path="/bills" element={<Bills />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Settings />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>

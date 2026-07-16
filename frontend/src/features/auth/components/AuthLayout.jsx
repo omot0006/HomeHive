@@ -5,18 +5,18 @@ import Logo from "../../../components/common/Logo";
 
 function AuthLayout({ title, description, children, footer }) {
   return (
-    <main className="min-h-screen bg-hive-canvas p-4 sm:p-6">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2rem] border border-hive-border bg-hive-surface shadow-hive-float lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="flex flex-col p-6 sm:p-10 lg:p-14">
+    <main className="min-h-dvh bg-hive-canvas sm:p-6">
+      <div className="mx-auto grid min-h-dvh max-w-7xl overflow-hidden bg-hive-surface sm:min-h-[calc(100dvh-3rem)] sm:rounded-[2rem] sm:border sm:border-hive-border sm:shadow-hive-float lg:grid-cols-[1.05fr_0.95fr]">
+        <section className="flex min-w-0 flex-col p-5 sm:p-10 lg:p-14">
           <Link to="/" className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-hive-muted transition hover:text-hive-terracotta">
             <ArrowLeft size={16} /> Back to HomeHive
           </Link>
 
-          <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
+          <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-8 sm:py-12">
             <Link to="/" className="mb-10 w-fit">
               <Logo size="small" textClassName="text-hive-ink" />
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight text-hive-ink sm:text-4xl">{title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-hive-ink min-[375px]:text-3xl sm:text-4xl">{title}</h1>
             <p className="mt-3 leading-7 text-hive-muted">{description}</p>
             <div className="mt-8">{children}</div>
             {footer && <div className="mt-8 text-center text-sm text-hive-muted">{footer}</div>}

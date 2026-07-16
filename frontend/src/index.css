@@ -3,6 +3,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -17,7 +18,8 @@ body {
   background: #f8f5f0;
   color: #25241f;
 
-  overflow-x: hidden;
+  min-width: 0;
+  overflow-x: clip;
 
   -webkit-font-smoothing: antialiased;
 }
@@ -28,6 +30,47 @@ input,
 select,
 textarea {
   -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: inherit;
+  }
+}
+
+@media (max-width: 639px) {
+  main h1 {
+    overflow-wrap: anywhere;
+  }
+
+  main .text-4xl,
+  main .text-5xl,
+  main .text-6xl,
+  main .text-\[4\.5rem\] {
+    font-size: clamp(2rem, 10vw, 2.75rem);
+    line-height: 1.08;
+  }
+
+  main .w-80 {
+    max-width: calc(100vw - 2rem);
+  }
+
+  main .grid-cols-3 > * {
+    min-width: 0;
+  }
 }
 
 button,

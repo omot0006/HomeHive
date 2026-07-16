@@ -9,7 +9,7 @@ function NavigationItem({ to, icon, children, onClick, className }) {
     className,
   );
 
-  if (to) return <NavLink to={to} className={({ isActive }) => classes(isActive)}>{content}</NavLink>;
+  if (to) return <NavLink to={to} onClick={onClick} className={({ isActive }) => classes(isActive)}>{content}</NavLink>;
   return <button type="button" onClick={onClick} className={cn(classes(false), "w-full text-left")}>{content}</button>;
 }
 

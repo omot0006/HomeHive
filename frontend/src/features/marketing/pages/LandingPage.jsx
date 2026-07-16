@@ -13,7 +13,7 @@ const faqs = [["Is HomeHive free to start?", "Yes. The Free plan includes core h
 const reveal = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.15 }, transition: { duration: 0.45 } };
 
 function SectionTitle({ eyebrow, title, text, centered = false }) {
-  return <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}><p className="text-sm font-bold uppercase tracking-[0.16em] text-[#e87722]">{eyebrow}</p><h2 className="mt-4 text-4xl font-bold tracking-tight text-[#07143d] sm:text-5xl">{title}</h2>{text && <p className="mt-5 text-lg leading-8 text-[#576078]">{text}</p>}</div>;
+  return <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#e87722] sm:text-sm sm:tracking-[0.16em]">{eyebrow}</p><h2 className="mt-4 text-3xl font-bold tracking-tight text-[#07143d] sm:text-5xl">{title}</h2>{text && <p className="mt-4 leading-7 text-[#576078] sm:mt-5 sm:text-lg sm:leading-8">{text}</p>}</div>;
 }
 
 function ProductMockup() {

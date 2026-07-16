@@ -86,8 +86,8 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-hive-canvas text-hive-ink lg:flex">
-      <aside className="hidden min-h-screen w-64 shrink-0 flex-col justify-between bg-gradient-to-b from-hive-ink-soft to-[#1f2924] p-5 text-white lg:flex">
+    <div className="min-h-full min-w-0 bg-hive-canvas text-hive-ink">
+      <aside className="hidden">
         <div>
           <Logo size="default" className="px-2" textClassName="text-white" />
           <div className="mt-9 rounded-hive-md border border-white/10 bg-white/5 px-3 py-3"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-hive-honey">Your household</p><p className="mt-1 font-semibold">Maple House</p></div>
@@ -96,7 +96,7 @@ function Dashboard() {
         <div className="rounded-hive-lg border border-white/10 bg-white/5 p-4"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-hive-terracotta text-xs font-bold">AM</div><div className="min-w-0"><p className="truncate font-bold">Aisha Martin</p><p className="mt-0.5 text-sm text-white/50">House owner</p></div></div><div className="mt-4 flex items-center gap-2 border-t border-white/10 pt-3 text-xs text-white/60"><Sparkles size={14} className="text-hive-honey" /> One Home. One Team.</div></div>
       </aside>
 
-      <main className="min-w-0 flex-1 px-4 pb-24 pt-4 sm:px-6 lg:px-8 lg:py-7 xl:px-10">
+      <main className="min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-7 xl:px-10">
         <header className="flex items-center justify-between gap-4"><div><Logo size="small" className="lg:hidden" textClassName="text-hive-ink" /><p className="hidden text-xs font-bold uppercase tracking-[0.18em] text-hive-terracotta lg:block">Maple House · Thursday, July 10</p><h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl lg:mt-3 lg:text-4xl">Good morning, Aisha</h1><p className="mt-1 text-sm text-hive-muted sm:text-base">Your household is moving in a good rhythm today.</p></div><div className="flex items-center gap-2"><div className="hidden w-64 xl:block"><div className="flex h-11 items-center gap-2 rounded-hive-md border border-hive-border bg-hive-surface px-3 text-hive-muted shadow-sm"><Search size={17} /><input aria-label="Search your household…" placeholder="Search your household…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-hive-muted/70" /></div></div><IconButton label="Search HomeHive" className="xl:hidden" onClick={() => setIsSearchOpen((open) => !open)}><Search size={19} /></IconButton><div className="relative"><IconButton label="Open notifications" onClick={() => setIsNotificationsOpen((open) => !open)} className="relative"><Bell size={19} /><span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-hive-terracotta" /></IconButton>{isNotificationsOpen && <Card className="absolute right-0 z-30 mt-3 w-80 p-5"><div className="flex items-center justify-between"><p className="font-bold">Notifications</p><a href="/notifications" className="text-sm font-bold text-hive-terracotta">View all</a></div><div className="mt-4 space-y-3 text-sm text-hive-muted"><p><strong className="text-hive-ink">Chore reminder:</strong> Kitchen reset is due today.</p><p><strong className="text-hive-ink">Rent reminder:</strong> 4 days remaining.</p><p><strong className="text-hive-ink">Birthday ahead:</strong> Sarah&apos;s dinner is Friday.</p></div></Card>}</div><a href="/profile" aria-label="Open Aisha's profile" className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-hive-surface bg-hive-terracotta text-sm font-bold text-white shadow-hive-card ring-1 ring-hive-border transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--hh-focus-ring)]">AM</a></div></header>
 
         {isSearchOpen && <Card className="mt-5 p-4 xl:hidden"><Input autoFocus aria-label="Search HomeHive" placeholder="Search tasks, members, and events…" /><p className="mt-3 text-sm text-hive-muted">Try “rent”, “Sarah”, or “kitchen reset”.</p></Card>}
@@ -121,7 +121,7 @@ function Dashboard() {
         </section>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 flex justify-between border-t border-hive-border bg-hive-surface/95 px-2 py-2 backdrop-blur lg:hidden">{menu.slice(0, 5).map((item) => <a key={item.name} href={item.path} className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-hive-sm py-1.5 text-[10px] font-semibold ${item.name === "Dashboard" ? "text-hive-terracotta" : "text-hive-muted"}`}>{item.icon}<span className="truncate">{item.name}</span></a>)}</nav>
+      <nav className="hidden" aria-hidden="true">{menu.slice(0, 5).map((item) => <a key={item.name} href={item.path}>{item.name}</a>)}</nav>
 
       <Modal isOpen={Boolean(quickAction)} onClose={() => setQuickAction("")} title={quickAction} description={quickAction === "Invite member" ? "Send an invitation to someone you live with." : "Add a shared detail for Maple House."}><div className="space-y-5"><Input label={actionCopy[quickAction]?.label} placeholder={actionCopy[quickAction]?.placeholder} value={entry} onChange={(event) => setEntry(event.target.value)} /><div className="flex gap-3"><Button variant="outline" fullWidth onClick={() => setQuickAction("")}>Cancel</Button><Button fullWidth onClick={saveQuickAction}>Save</Button></div></div></Modal>
     </div>
